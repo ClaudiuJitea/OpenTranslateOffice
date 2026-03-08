@@ -1,0 +1,17 @@
+{
+  "name": "open-translate-office",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace @oto/web run dev",
+    "dev:api": "npm --workspace @oto/api run dev",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "db:generate": "npm --workspace @oto/db run db:generate",
+    "db:push": "npm --workspace @oto/db run db:push"
+  }
+}

@@ -1,0 +1,8 @@
+services:
+  libreoffice:
+    build:
+      context: ./libreoffice
+    container_name: ${LIBREOFFICE_CONTAINER_NAME:-oto-libreoffice}
+    restart: unless-stopped
+    volumes:
+      - ${LIBREOFFICE_HOST_STORAGE_PATH:-../apps/api/storage}:/workspace/storage

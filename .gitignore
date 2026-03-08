@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+.vite
+.env
+.env.*
+!.env.example
+storage
+apps/api/dev.sqlite
+coverage
+.DS_Store
+*.tsbuildinfo
