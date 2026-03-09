@@ -1,6 +1,7 @@
 import {
   bootstrapDatabase,
   getDbClient,
+  jobScheduleAllocations,
   jobAssignments,
   jobs,
   users
@@ -9,6 +10,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import { env } from "../config/env";
+import { purgeDeletedIntakesIfDue } from "../services/maintenance/intake-retention";
 
 const db = getDbClient(env.DATABASE_URL);
 let initialized = false;
@@ -23,8 +25,10 @@ export async function initDatabase() {
   }
 
   await bootstrapDatabase(db);
+  await purgeDeletedIntakesIfDue();
   const adminId = await ensureDefaultAdmin();
-  await ensureSeedJobs(adminId);
+  const employeeIds = await ensureDefaultEmployees();
+  await ensureSeedJobs(adminId, employeeIds);
   initialized = true;
 }
 
@@ -54,7 +58,43 @@ async function ensureDefaultAdmin() {
   return adminId;
 }
 
-async function ensureSeedJobs(adminId: string) {
+async function ensureDefaultEmployees() {
+  const defaults = [
+    { email: "translator1@oto.local", fullName: "Translator One" },
+    { email: "translator2@oto.local", fullName: "Translator Two" }
+  ];
+  const passwordHash = await bcrypt.hash("change-this-employee-password", 10);
+  const ids: string[] = [];
+
+  for (const entry of defaults) {
+    const existing = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, entry.email))
+      .limit(1);
+
+    if (existing[0]?.id) {
+      ids.push(existing[0].id);
+      continue;
+    }
+
+    const employeeId = randomUUID();
+    await db.insert(users).values({
+      id: employeeId,
+      email: entry.email,
+      fullName: entry.fullName,
+      passwordHash,
+      role: "EMPLOYEE",
+      isActive: true,
+      createdAt: new Date()
+    });
+    ids.push(employeeId);
+  }
+
+  return ids;
+}
+
+async function ensureSeedJobs(adminId: string, employeeIds: string[]) {
   const existingJobs = await db.select({ id: jobs.id }).from(jobs).limit(1);
   if (existingJobs.length > 0) {
     return;
@@ -101,14 +141,29 @@ async function ensureSeedJobs(adminId: string) {
   ];
 
   await db.insert(jobs).values(seedJobs);
+  const assignees = employeeIds.length > 0 ? employeeIds : [adminId];
   await db.insert(jobAssignments).values(
-    seedJobs.map((job) => ({
+    seedJobs.map((job, index) => ({
       id: randomUUID(),
       jobId: job.id,
-      userId: adminId,
+      userId: assignees[index % assignees.length],
       assignedBy: adminId,
       active: true,
       assignedAt: new Date(now)
     }))
+  );
+  await db.insert(jobScheduleAllocations).values(
+    seedJobs.map((job, index) => {
+      const startAt = new Date(now + index * 1000 * 60 * 60 * 2);
+      const endAt = new Date(startAt.getTime() + 1000 * 60 * 60);
+      return {
+        id: randomUUID(),
+        jobId: job.id,
+        userId: assignees[index % assignees.length],
+        startAt,
+        endAt,
+        createdAt: new Date(now)
+      };
+    })
   );
 }

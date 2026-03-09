@@ -5,6 +5,7 @@ export type IntakeFieldKey =
   | "targetLanguage"
   | "documentType"
   | "fileType"
+  | "pageCountDeclared"
   | "certificationRequired"
   | "urgency"
   | "files";
@@ -18,6 +19,8 @@ export interface IntakeChatExtracted {
   targetLanguage?: string;
   documentType?: string;
   fileType?: string;
+  pageCountDeclared?: number;
+  pageCountVerified?: number;
   certificationRequired?: boolean;
   deadlineIso?: string;
   urgency?: "LOW" | "MEDIUM" | "HIGH" | "URGENT";

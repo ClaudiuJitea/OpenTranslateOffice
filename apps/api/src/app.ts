@@ -5,6 +5,10 @@ import multer from "multer";
 import { initDatabase } from "./db/runtime";
 import adminRoutes from "./features/admin/settings.routes";
 import authRoutes from "./features/auth/auth.routes";
+import {
+  publicCallRequestsRouter,
+  staffCallRequestsRouter
+} from "./features/call-requests/call-requests.routes";
 import documentsRoutes from "./features/documents/documents.routes";
 import intakeRoutes from "./features/intake/intake.routes";
 import jobsRoutes from "./features/jobs/jobs.routes";
@@ -25,11 +29,18 @@ export async function createApp() {
   });
 
   app.use("/api/intake", intakeRoutes);
+  app.use("/api/call-requests", publicCallRequestsRouter);
   app.use("/api/portal", portalRoutes);
   app.use("/api/voice", voiceRoutes);
   app.use("/api/auth", authRoutes);
   app.use("/api/admin", requireAuth, requireRole(["ADMIN"]), adminRoutes);
   app.use("/api/jobs", requireAuth, requireRole(["EMPLOYEE", "ADMIN"]), jobsRoutes);
+  app.use(
+    "/api/staff/call-requests",
+    requireAuth,
+    requireRole(["EMPLOYEE", "ADMIN"]),
+    staffCallRequestsRouter
+  );
   app.use(
     "/api/documents",
     requireAuth,

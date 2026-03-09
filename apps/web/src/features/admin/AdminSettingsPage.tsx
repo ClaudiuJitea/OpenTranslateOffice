@@ -1,7 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n/I18nProvider";
 import {
   createAdminUser,
+  deleteAdminUser,
   getAdminUsers,
   getIntegrationSettings,
   updateAdminUser,
@@ -15,9 +17,12 @@ export function AdminSettingsPage() {
   const [settings, setSettings] = useState<IntegrationSettings | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "saving">("idle");
   const [resetTarget, setResetTarget] = useState<AdminUser | null>(null);
   const [resetPassword, setResetPassword] = useState("");
+  const [resetPasswordConfirm, setResetPasswordConfirm] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
 
   useEffect(() => {
     void load();
@@ -25,6 +30,7 @@ export function AdminSettingsPage() {
 
   async function load() {
     setError(null);
+    setNotice(null);
     try {
       const [settingsResult, usersResult] = await Promise.all([
         getIntegrationSettings(),
@@ -49,21 +55,31 @@ export function AdminSettingsPage() {
 
     setStatus("saving");
     setError(null);
+    setNotice(null);
     try {
       const openrouterApiKey = String(formData.get("openrouterApiKey") ?? "").trim();
       const elevenlabsApiKey = String(formData.get("elevenlabsApiKey") ?? "").trim();
       const elevenlabsWebhookSecret = String(formData.get("elevenlabsWebhookSecret") ?? "").trim();
+      const openrouterBaseUrl = String(formData.get("openrouterBaseUrl") ?? "").trim();
+      const openrouterModel = String(formData.get("openrouterModel") ?? "").trim();
+      const elevenlabsBaseUrl = String(formData.get("elevenlabsBaseUrl") ?? "").trim();
+      const elevenlabsAgentId = String(formData.get("elevenlabsAgentId") ?? "").trim();
 
       const updated = await updateIntegrationSettings({
-        openrouterBaseUrl: String(formData.get("openrouterBaseUrl") ?? ""),
-        openrouterModel: String(formData.get("openrouterModel") ?? ""),
-        elevenlabsBaseUrl: String(formData.get("elevenlabsBaseUrl") ?? ""),
-        elevenlabsAgentId: String(formData.get("elevenlabsAgentId") ?? ""),
+        ...(openrouterBaseUrl ? { openrouterBaseUrl } : {}),
+        ...(openrouterModel ? { openrouterModel } : {}),
+        ...(elevenlabsBaseUrl ? { elevenlabsBaseUrl } : {}),
+        ...(elevenlabsAgentId ? { elevenlabsAgentId } : {}),
         ...(openrouterApiKey ? { openrouterApiKey } : {}),
         ...(elevenlabsApiKey ? { elevenlabsApiKey } : {}),
         ...(elevenlabsWebhookSecret ? { elevenlabsWebhookSecret } : {})
       });
       setSettings(updated);
+      setNotice(
+        locale === "pl"
+          ? "Ustawienia integracji zostaly zapisane."
+          : "Integration settings saved."
+      );
     } catch (saveError) {
       setError(
         saveError instanceof Error
@@ -84,6 +100,7 @@ export function AdminSettingsPage() {
 
     setStatus("saving");
     setError(null);
+    setNotice(null);
     try {
       await createAdminUser({
         fullName: String(formData.get("fullName") ?? "").trim(),
@@ -108,15 +125,43 @@ export function AdminSettingsPage() {
   }
 
   async function onToggleActive(user: AdminUser) {
+    setStatus("saving");
     setError(null);
-    await updateAdminUser(user.id, { isActive: !user.isActive });
-    setUsers(await getAdminUsers());
+    setNotice(null);
+    try {
+      await updateAdminUser(user.id, { isActive: !user.isActive });
+      setUsers(await getAdminUsers());
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : locale === "pl"
+            ? "Nie mozna zaktualizowac statusu uzytkownika."
+            : "Unable to update user status"
+      );
+    } finally {
+      setStatus("idle");
+    }
   }
 
   async function onRoleChange(user: AdminUser, role: "EMPLOYEE" | "ADMIN") {
+    setStatus("saving");
     setError(null);
-    await updateAdminUser(user.id, { role });
-    setUsers(await getAdminUsers());
+    setNotice(null);
+    try {
+      await updateAdminUser(user.id, { role });
+      setUsers(await getAdminUsers());
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : locale === "pl"
+            ? "Nie mozna zaktualizowac roli uzytkownika."
+            : "Unable to update user role"
+      );
+    } finally {
+      setStatus("idle");
+    }
   }
 
   async function onConfirmResetPassword() {
@@ -130,12 +175,23 @@ export function AdminSettingsPage() {
       return;
     }
 
+    if (resetPassword !== resetPasswordConfirm) {
+      setError(
+        locale === "pl"
+          ? "Wprowadzone hasla musza byc identyczne."
+          : "The password entries must match"
+      );
+      return;
+    }
+
     setStatus("saving");
     setError(null);
+    setNotice(null);
     try {
       await updateAdminUser(resetTarget.id, { password: resetPassword.trim() });
       setResetTarget(null);
       setResetPassword("");
+      setResetPasswordConfirm("");
     } catch (saveError) {
       setError(
         saveError instanceof Error
@@ -143,6 +199,28 @@ export function AdminSettingsPage() {
           : locale === "pl"
             ? "Nie mozna zresetowac hasla."
             : "Failed to reset password"
+      );
+    } finally {
+      setStatus("idle");
+    }
+  }
+
+  async function onConfirmDeleteUser() {
+    if (!deleteTarget) return;
+
+    setStatus("saving");
+    setError(null);
+    try {
+      await deleteAdminUser(deleteTarget.id);
+      setDeleteTarget(null);
+      setUsers(await getAdminUsers());
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : locale === "pl"
+            ? "Nie mozna usunac uzytkownika."
+            : "Unable to delete user"
       );
     } finally {
       setStatus("idle");
@@ -168,6 +246,12 @@ export function AdminSettingsPage() {
       {error ? (
         <p role="alert" className="border border-accent p-3 text-sm">
           {error}
+        </p>
+      ) : null}
+
+      {notice ? (
+        <p className="border border-accent p-3 text-sm text-accent">
+          {notice}
         </p>
       ) : null}
 
@@ -270,10 +354,20 @@ export function AdminSettingsPage() {
                         onClick={() => {
                           setResetTarget(user);
                           setResetPassword("");
+                          setResetPasswordConfirm("");
                         }}
                         className="underline underline-offset-4"
                       >
                         {locale === "pl" ? "Resetuj haslo" : "Reset Password"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDeleteTarget(user);
+                        }}
+                        className="underline underline-offset-4 text-accent"
+                      >
+                        {locale === "pl" ? "Usun" : "Delete"}
                       </button>
                     </div>
                   </td>
@@ -281,6 +375,40 @@ export function AdminSettingsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <section className="space-y-5 border border-neutral-900 p-5">
+        <header className="space-y-1 border-b border-neutral-900 pb-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-neutral-700">
+            {locale === "pl" ? "Plan pracy" : "Work Calendar"}
+          </p>
+          <h2 className="text-2xl font-semibold tracking-tight">
+            {locale === "pl" ? "Kalendarz zespolu" : "Team Work Calendar"}
+          </h2>
+          <p className="max-w-3xl text-sm leading-6 text-neutral-800">
+            {locale === "pl"
+              ? "Otworz osobna strone kalendarza, aby przegladac przypisane zlecenia i dzienny harmonogram pracy dla wybranego uzytkownika."
+              : "Open the dedicated calendar page to review assigned jobs and daily working hours for a selected user."}
+          </p>
+        </header>
+        <div className="flex items-center justify-between gap-4 border border-neutral-300 p-4">
+          <div className="space-y-1">
+            <p className="text-sm font-medium">
+              {locale === "pl" ? "Widok kalendarza i godzin pracy" : "Calendar and Working Hours View"}
+            </p>
+            <p className="text-sm text-neutral-700">
+              {locale === "pl"
+                ? "Przejdz do dedykowanej strony, aby przegladac harmonogram bez przeciazenia ustawien administracyjnych."
+                : "Use the dedicated page for scheduling without crowding the admin settings screen."}
+            </p>
+          </div>
+          <Link
+            to="/admin/calendar"
+            className="border border-neutral-900 bg-ink px-5 py-3 text-xs uppercase tracking-[0.16em] text-paper"
+          >
+            {locale === "pl" ? "Otworz kalendarz" : "Open Calendar"}
+          </Link>
         </div>
       </section>
 
@@ -360,6 +488,20 @@ export function AdminSettingsPage() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <label htmlFor="resetPasswordConfirm" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
+                {locale === "pl" ? "Potwierdz haslo" : "Confirm Password"}
+              </label>
+              <input
+                id="resetPasswordConfirm"
+                type="password"
+                value={resetPasswordConfirm}
+                onChange={(event) => setResetPasswordConfirm(event.target.value)}
+                className="h-12 w-full border border-neutral-900 bg-paper px-3"
+                minLength={8}
+                required
+              />
+            </div>
             <div className="flex gap-3">
               <button
                 type="button"
@@ -382,6 +524,80 @@ export function AdminSettingsPage() {
                 onClick={() => {
                   setResetTarget(null);
                   setResetPassword("");
+                  setResetPasswordConfirm("");
+                }}
+                className="border border-neutral-900 px-4 py-2 text-xs uppercase tracking-[0.16em]"
+              >
+                {locale === "pl" ? "Anuluj" : "Cancel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {deleteTarget ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-user-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
+        >
+          <div className="w-full max-w-md space-y-4 border border-neutral-900 bg-paper p-5">
+            <h3 id="delete-user-title" className="text-xl font-semibold tracking-tight">
+              {locale === "pl" ? "Usuniecie uzytkownika" : "Delete User Account"}
+            </h3>
+            <p className="text-sm leading-6">
+              {locale === "pl"
+                ? "Ta operacja jest nieodwracalna. Przed usunieciem konta nalezy najpierw dezaktywowac uzytkownika."
+                : "This action is permanent. The user account must be deactivated before it can be deleted."}
+            </p>
+            <div className="border border-neutral-300 px-3 py-3 text-sm leading-6">
+              <p>
+                <span className="font-medium">{locale === "pl" ? "Uzytkownik:" : "User:"}</span>{" "}
+                {deleteTarget.fullName}
+              </p>
+              <p>
+                <span className="font-medium">Email:</span> {deleteTarget.email}
+              </p>
+              <p>
+                <span className="font-medium">{locale === "pl" ? "Status:" : "Status:"}</span>{" "}
+                {deleteTarget.isActive
+                  ? locale === "pl"
+                    ? "Aktywny"
+                    : "Active"
+                  : locale === "pl"
+                    ? "Nieaktywny"
+                    : "Inactive"}
+              </p>
+            </div>
+            {deleteTarget.isActive ? (
+              <p className="border border-accent p-3 text-sm leading-6 text-accent">
+                {locale === "pl"
+                  ? "Przed usunieciem konta najpierw dezaktywuj tego uzytkownika na liscie uzytkownikow. Aktywne konta nie moga zostac usuniete."
+                  : "Please deactivate this user from the users list before proceeding. Active accounts cannot be deleted."}
+              </p>
+            ) : null}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  void onConfirmDeleteUser();
+                }}
+                disabled={status === "saving" || deleteTarget.isActive}
+                className="border border-accent bg-paper px-4 py-2 text-xs uppercase tracking-[0.16em] text-accent disabled:opacity-60"
+              >
+                {status === "saving"
+                  ? locale === "pl"
+                    ? "Zapisywanie"
+                    : "Saving"
+                  : locale === "pl"
+                    ? "Usun konto"
+                    : "Delete Account"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteTarget(null);
                 }}
                 className="border border-neutral-900 px-4 py-2 text-xs uppercase tracking-[0.16em]"
               >

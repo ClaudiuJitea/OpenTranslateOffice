@@ -3,7 +3,6 @@ import {
   intakeDocuments,
   intakeMessages,
   intakeSessions,
-  jobAssignments,
   jobs,
   users
 } from "@oto/db";
@@ -29,6 +28,7 @@ import {
   generateRequestNumber,
   hashPortalPassword
 } from "../../services/portal/request-access";
+import { allocateRequestJob } from "../../services/scheduling/request-allocation";
 
 const router = Router();
 const db = getDb();
@@ -132,10 +132,11 @@ router.post("/sessions/:id/messages", async (req, res) => {
     createdAt: now
   });
 
+  const currentMissing = assistant.missingFields(currentExtracted, uploadedFilesCount);
   const llm = await openrouter.extractAndReply({
     userMessage: parsed.data.content,
     current: currentExtracted,
-    missing: assistant.missingFields(currentExtracted, uploadedFilesCount),
+    missing: currentMissing,
     uploadedFilesCount,
     locale
   });
@@ -336,6 +337,7 @@ async function upsertJobReadyIntake(
     !extracted.targetLanguage ||
     !extracted.documentType ||
     !extracted.fileType ||
+    !extracted.pageCountDeclared ||
     extracted.certificationRequired === undefined
   ) {
     return null;
@@ -376,6 +378,7 @@ async function upsertJobReadyIntake(
       targetLanguage: extracted.targetLanguage,
       documentType: extracted.documentType,
       fileType: extracted.fileType,
+      declaredPageCount: extracted.pageCountDeclared ?? null,
       certificationRequired: extracted.certificationRequired,
       deadlineAt: extracted.deadlineIso ? new Date(extracted.deadlineIso) : null,
       urgency: extracted.urgency,
@@ -401,6 +404,7 @@ async function upsertJobReadyIntake(
         targetLanguage: extracted.targetLanguage,
         documentType: extracted.documentType,
         fileType: extracted.fileType,
+        declaredPageCount: extracted.pageCountDeclared ?? null,
         certificationRequired: extracted.certificationRequired,
         deadlineAt: extracted.deadlineIso ? new Date(extracted.deadlineIso) : null,
         urgency: extracted.urgency,
@@ -442,6 +446,7 @@ async function upsertJobReadyIntake(
       targetLang: extracted.targetLanguage,
       status: "NEW",
       priority: extracted.urgency ?? "MEDIUM",
+      declaredPageCount: extracted.pageCountDeclared ?? null,
       certificationRequired: extracted.certificationRequired,
       dueAt: extracted.deadlineIso ? new Date(extracted.deadlineIso) : null,
       createdAt: now
@@ -456,22 +461,15 @@ async function upsertJobReadyIntake(
 
   const adminId = admin[0]?.id;
   if (adminId && jobId) {
-    const assignment = await db
-      .select({ id: jobAssignments.id })
-      .from(jobAssignments)
-      .where(and(eq(jobAssignments.jobId, jobId), eq(jobAssignments.userId, adminId), eq(jobAssignments.active, true)))
-      .limit(1);
-
-    if (assignment.length === 0) {
-      await db.insert(jobAssignments).values({
-        id: randomUUID(),
-        jobId,
-        userId: adminId,
-        assignedBy: adminId,
-        active: true,
-        assignedAt: now
-      });
-    }
+    await allocateRequestJob({
+      sessionId,
+      jobId,
+      declaredPageCount: extracted.pageCountDeclared,
+      priority: extracted.urgency,
+      explicitDeadlineAt: extracted.deadlineIso ? new Date(extracted.deadlineIso) : null,
+      assignedBy: adminId,
+      now
+    });
   }
 
   return { requestNumber, portalPassword };
@@ -540,5 +538,37 @@ function isUsableAssistantReply(value: string | undefined) {
     return false;
   }
 
+  // Reject checklist-style prompts that dump most of the intake in one message.
+  if (asksForTooMuchAtOnce(trimmed)) {
+    return false;
+  }
+
   return true;
+}
+
+function asksForTooMuchAtOnce(value: string) {
+  const lower = value.toLowerCase();
+  const signals = [
+    "full name",
+    "email",
+    "source language",
+    "target language",
+    "document type",
+    "file format",
+    "page count",
+    "certification",
+    "urgency",
+    "imie i nazwisko",
+    "adres email",
+    "jezyk zrodlowy",
+    "jezyk docelowy",
+    "typ dokumentu",
+    "format pliku",
+    "liczbe stron",
+    "tlumaczenia certyfikowanego",
+    "termin realizacji"
+  ];
+
+  const matches = signals.filter((signal) => lower.includes(signal)).length;
+  return matches >= 4;
 }

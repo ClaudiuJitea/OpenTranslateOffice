@@ -19,6 +19,21 @@ export interface AdminUser {
   createdAt: string;
 }
 
+export interface AssignedUserJob {
+  id: string;
+  jobId: string;
+  title: string;
+  sourceLang: string;
+  targetLang: string;
+  status: string;
+  priority: string;
+  scheduledStartAt: string;
+  scheduledEndAt: string;
+  estimatedMinutes: number | null;
+  verifiedPageCount: number | null;
+  createdAt: string;
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
 
 export async function getIntegrationSettings() {
@@ -104,4 +119,35 @@ export async function updateAdminUser(
     const payload = (await response.json().catch(() => null)) as { error?: string } | null;
     throw new Error(payload?.error ?? "Unable to update user");
   }
+}
+
+export async function deleteAdminUser(userId: string) {
+  const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+    method: "DELETE",
+    credentials: "include"
+  });
+
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(payload?.error ?? "Unable to delete user");
+  }
+}
+
+export async function getAssignedJobsForUser(userId: string, from: string, to: string) {
+  const query = new URLSearchParams({ from, to });
+  const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/jobs?${query.toString()}`, {
+    credentials: "include"
+  });
+
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(payload?.error ?? "Unable to load assigned user jobs");
+  }
+
+  const payload = (await response.json()) as {
+    user: AdminUser;
+    items: AssignedUserJob[];
+  };
+
+  return payload;
 }

@@ -2,6 +2,7 @@ export * from "./client";
 export * from "./bootstrap";
 export * from "./schema";
 export * from "./schema/app-settings";
+export * from "./schema/call-requests";
 export * from "./schema/intake-chat";
 export * from "./schema/jobs";
 export * from "./schema/intake";

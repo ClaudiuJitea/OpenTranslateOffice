@@ -20,9 +20,21 @@ export function AppShell({ children }: { children: ReactNode }) {
             className="flex items-center gap-6 text-sm uppercase tracking-[0.18em]"
           >
             <Link className="underline-offset-4 hover:underline" to="/">{t("nav.home")}</Link>
-            <Link className="underline-offset-4 hover:underline" to="/dashboard">{t("nav.workbench")}</Link>
+            {user?.role === "EMPLOYEE" || user?.role === "ADMIN" ? (
+              <>
+                <Link className="underline-offset-4 hover:underline" to="/dashboard">{t("nav.workbench")}</Link>
+                <Link className="underline-offset-4 hover:underline" to="/calls">
+                  {locale === "pl" ? "Telefony" : "Calls"}
+                </Link>
+              </>
+            ) : null}
             {user?.role === "ADMIN" ? (
-              <Link className="underline-offset-4 hover:underline" to="/admin">{t("nav.admin")}</Link>
+              <>
+                <Link className="underline-offset-4 hover:underline" to="/admin">{t("nav.admin")}</Link>
+                <Link className="underline-offset-4 hover:underline" to="/admin/calendar">
+                  {locale === "pl" ? "Kalendarz" : "Calendar"}
+                </Link>
+              </>
             ) : null}
             <div className="flex items-center gap-2 text-xs tracking-[0.16em]">
               <button

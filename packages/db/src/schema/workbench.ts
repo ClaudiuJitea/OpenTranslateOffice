@@ -16,6 +16,29 @@ export const jobAssignments = sqliteTable(
   })
 );
 
+export const jobScheduleAllocations = sqliteTable(
+  "job_schedule_allocations",
+  {
+    id: text("id").primaryKey(),
+    jobId: text("job_id").notNull(),
+    userId: text("user_id").notNull(),
+    startAt: integer("start_at", { mode: "timestamp_ms" }).notNull(),
+    endAt: integer("end_at", { mode: "timestamp_ms" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull()
+  },
+  (table) => ({
+    userTimeIdx: index("job_schedule_allocations_user_time_idx").on(
+      table.userId,
+      table.startAt,
+      table.endAt
+    ),
+    jobTimeIdx: index("job_schedule_allocations_job_time_idx").on(
+      table.jobId,
+      table.startAt
+    )
+  })
+);
+
 export const jobStatusHistory = sqliteTable(
   "job_status_history",
   {

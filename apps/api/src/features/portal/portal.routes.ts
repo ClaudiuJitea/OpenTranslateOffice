@@ -9,12 +9,14 @@ import jwt from "jsonwebtoken";
 import path from "node:path";
 import { env } from "../../config/env";
 import { getDb } from "../../db/runtime";
+import { purgeDeletedIntakesIfDue } from "../../services/maintenance/intake-retention";
 import { verifyPortalPassword } from "../../services/portal/request-access";
 
 const router = Router();
 const db = getDb();
 
 router.post("/login", async (req, res) => {
+  await purgeDeletedIntakesIfDue();
   const requestNumber = String(req.body?.requestNumber ?? "").trim().toUpperCase();
   const password = String(req.body?.password ?? "").trim();
 
@@ -43,6 +45,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/request", async (req, res) => {
+  await purgeDeletedIntakesIfDue();
   const payload = verifyPortalToken(req.headers.authorization);
   if (!payload) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -94,6 +97,7 @@ router.get("/request", async (req, res) => {
 });
 
 router.get("/request/files/:fileId/download", async (req, res) => {
+  await purgeDeletedIntakesIfDue();
   const payload = verifyPortalToken(req.headers.authorization, String(req.query.token ?? ""));
   if (!payload) {
     return res.status(401).json({ error: "Unauthorized" });

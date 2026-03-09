@@ -38,6 +38,9 @@ export function RequestSubmissionPage() {
           targetLanguage: String(form.get("targetLanguage") ?? ""),
           documentType: String(form.get("documentType") ?? ""),
           fileType: String(form.get("fileType") ?? ""),
+          pageCountDeclared: optionalValue(form.get("pageCountDeclared"))
+            ? Number(form.get("pageCountDeclared"))
+            : undefined,
           certificationRequired: form.get("certificationRequired") === "on",
           deadlineIso: optionalValue(form.get("deadlineIso"))
             ? new Date(String(form.get("deadlineIso"))).toISOString()
@@ -122,6 +125,13 @@ export function RequestSubmissionPage() {
         <Field label={locale === "pl" ? "Jezyk docelowy" : "Target Language"} name="targetLanguage" required placeholder={locale === "pl" ? "np. Angielski" : "e.g. English"} />
         <Field label={locale === "pl" ? "Typ dokumentu" : "Document Type"} name="documentType" required placeholder={locale === "pl" ? "Umowa, akt, instrukcja" : "Contract, certificate, manual"} />
         <Field label={locale === "pl" ? "Glowny typ pliku" : "Primary File Type"} name="fileType" required placeholder="PDF, DOCX" />
+        <Field
+          label={locale === "pl" ? "Liczba stron (szacunkowo)" : "Estimated Page Count"}
+          name="pageCountDeclared"
+          type="number"
+          required
+          placeholder={locale === "pl" ? "np. 12" : "e.g. 12"}
+        />
 
         <div className="space-y-2">
           <label htmlFor="deadlineIso" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
@@ -141,11 +151,10 @@ export function RequestSubmissionPage() {
             {locale === "pl" ? "Priorytet" : "Urgency"}
           </label>
           <select id="urgency" name="urgency" className="w-full border border-neutral-900 bg-paper px-3 py-3">
-            <option value="">{locale === "pl" ? "Wybierz priorytet" : "Select urgency"}</option>
-            <option value="LOW">{locale === "pl" ? "Niski" : "Low"}</option>
-            <option value="MEDIUM">{locale === "pl" ? "Sredni" : "Medium"}</option>
-            <option value="HIGH">{locale === "pl" ? "Wysoki" : "High"}</option>
-            <option value="URGENT">{locale === "pl" ? "Pilny" : "Urgent"}</option>
+            <option value="">{locale === "pl" ? "Wybierz termin" : "Select turnaround"}</option>
+            <option value="MEDIUM">{locale === "pl" ? "Standard (2 dni)" : "Standard (2 days)"}</option>
+            <option value="HIGH">{locale === "pl" ? "Pilne (na jutro)" : "Urgent (next day)"}</option>
+            <option value="URGENT">{locale === "pl" ? "Wysoki priorytet (dzisiaj)" : "High Priority (same day)"}</option>
           </select>
         </div>
 

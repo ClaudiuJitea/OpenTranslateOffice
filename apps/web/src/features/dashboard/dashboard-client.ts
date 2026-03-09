@@ -68,7 +68,7 @@ export interface AssignableUser {
   id: string;
   fullName: string;
   email: string;
-  role: "EMPLOYEE" | "ADMIN";
+  role: "EMPLOYEE";
 }
 
 export async function fetchAssignedJobs(status?: string) {
@@ -175,9 +175,9 @@ export async function fetchAssignableUsers() {
         id: string;
         fullName: string;
         email: string;
-        role: "EMPLOYEE" | "ADMIN";
+        role: "EMPLOYEE";
         isActive: boolean;
-      } => item.isActive && (item.role === "EMPLOYEE" || item.role === "ADMIN")
+      } => item.isActive && item.role === "EMPLOYEE"
     )
     .map((item) => ({
       id: item.id,
@@ -246,8 +246,9 @@ export async function translateSourceDocumentWithAi(jobId: string, docId: string
   return (await response.json()) as AiDocumentTranslationRun;
 }
 
-export function aiTranslationDownloadUrl(jobId: string, runId: string) {
-  return `${API_BASE_URL}/api/jobs/${jobId}/ai-translations/${runId}/download`;
+export function aiTranslationDownloadUrl(jobId: string, runId: string, format?: string) {
+  const query = format ? `?format=${encodeURIComponent(format)}` : "";
+  return `${API_BASE_URL}/api/jobs/${jobId}/ai-translations/${runId}/download${query}`;
 }
 
 export async function sendAiTranslationToCustomer(jobId: string, runId: string) {

@@ -10,6 +10,7 @@ const REQUIRED_FIELDS: IntakeFieldKey[] = [
   "targetLanguage",
   "documentType",
   "fileType",
+  "pageCountDeclared",
   "certificationRequired",
   "urgency",
   "files"
@@ -96,6 +97,13 @@ export class RuleBasedIntakeAssistant implements IntakeAssistantProvider {
       }
     }
 
+    if (!next.pageCountDeclared) {
+      const pagesMatch = message.match(/(\d{1,4})\s+(?:pages?|pgs?)/i);
+      if (pagesMatch?.[1]) {
+        next.pageCountDeclared = Number(pagesMatch[1]);
+      }
+    }
+
     if (next.certificationRequired === undefined) {
       if (lower.includes("certified") || lower.includes("sworn")) {
         next.certificationRequired = true;
@@ -177,9 +185,9 @@ function buildNextPrompt(
   const needsIdentity = missing.includes("fullName");
   if (needsIdentity) {
     if (locale === "pl") {
-      return "Zacznijmy od imienia i nazwiska, ktore ma widniec przy zgloszeniu. Jesli nie masz pewnosci, co wpisac, po prostu zapytaj.";
+      return "Chetnie pomoge krok po kroku. Na poczatek podaj prosze imie i nazwisko, ktore ma widniec przy zgloszeniu.";
     }
-    return "Let us start with your full name as it should appear on the request. If you are unsure what to include, just ask and I will help.";
+    return "I would be happy to help step by step. To begin, please share your full name as it should appear on the request.";
   }
 
   const needsContactOrLanguages =
@@ -203,19 +211,20 @@ function buildNextPrompt(
   const needsDocumentProfile =
     missing.includes("documentType") ||
     missing.includes("fileType") ||
+    missing.includes("pageCountDeclared") ||
     missing.includes("certificationRequired");
   if (needsDocumentProfile) {
     if (locale === "pl") {
       return [
         "Dobrze.",
-        "Powiedz jeszcze, jaki to rodzaj dokumentu, w jakim formacie pliku go przesylasz oraz czy potrzebujesz tlumaczenia przysieglego lub certyfikowanego.",
+        "Powiedz jeszcze, jaki to rodzaj dokumentu, w jakim formacie pliku go przesylasz, ile mniej wiecej ma stron oraz czy potrzebujesz tlumaczenia przysieglego lub certyfikowanego.",
         "Przyklad typu dokumentu: akt urodzenia, umowa, dyplom, raport medyczny, instrukcja techniczna albo CV."
       ].join(" ");
     }
 
     return [
       "Good.",
-      "Please also tell me what kind of document this is, which file format you are uploading, and whether you need a certified or sworn translation.",
+      "Please also tell me what kind of document this is, which file format you are uploading, roughly how many pages it has, and whether you need a certified or sworn translation.",
       "For document type, examples include: birth certificate, contract, diploma, medical report, technical manual, or resume."
     ].join(" ");
   }
@@ -249,7 +258,7 @@ function promptFor(
   if (locale === "pl") {
     switch (key) {
       case "fullName":
-        return "Podaj prosze swoje imie i nazwisko tak, jak ma widniec w zgloszeniu. Jesli cos jest niejasne, po prostu zapytaj.";
+        return "Na poczatek podaj prosze swoje imie i nazwisko tak, jak ma widniec w zgloszeniu.";
       case "email":
         return "Podaj prosze adres email, na ktory mamy wysylac aktualizacje i gotowe tlumaczenie.";
       case "sourceLanguage":
@@ -260,6 +269,8 @@ function promptFor(
         return "Jaki to typ dokumentu? Np. akt urodzenia, akt malzenstwa, umowa, dyplom, transkrypt ocen, raport medyczny, sprawozdanie finansowe, instrukcja techniczna lub tresc strony/aplikacji.";
       case "fileType":
         return "Jaki typ pliku przesylasz (PDF, DOCX, DOC, TXT, RTF, ODT)? Jesli nie masz pewnosci, napisz nazwe pliku z rozszerzeniem.";
+      case "pageCountDeclared":
+        return "Ile stron ma dokument wedlug Ciebie? Podaj przyblizona liczbe stron, a po przeslaniu pliku zweryfikujemy ja automatycznie.";
       case "certificationRequired":
         return "Czy potrzebujesz tlumaczenia certyfikowanego/przysieglego?";
       case "urgency":
@@ -271,7 +282,7 @@ function promptFor(
 
   switch (key) {
     case "fullName":
-      return "Please share your full name as it should appear on the request. If anything is unclear, just ask and I will help.";
+      return "To begin, please share your full name as it should appear on the request.";
     case "email":
       return "Please share the email address you want us to use for updates and delivery.";
     case "sourceLanguage":
@@ -282,6 +293,8 @@ function promptFor(
       return "What is the document type? For example: birth certificate, marriage certificate, legal contract, diploma, academic transcript, medical report, financial statement, technical manual, or website/app content. If none match, describe it in your own words.";
     case "fileType":
       return "Which file type are you uploading (PDF, DOCX, DOC, TXT, RTF, or ODT)? If you are not sure, just tell me what you see in the file name.";
+    case "pageCountDeclared":
+      return "About how many pages does the document have? Share your estimate and we will verify it automatically after upload.";
     case "certificationRequired":
       if (extracted.documentType?.toLowerCase().includes("certificate")) {
         return "Do you require certified translation for this request?";
@@ -310,6 +323,7 @@ function summaryLine(extracted: IntakeChatExtracted) {
     `${extracted.sourceLanguage} -> ${extracted.targetLanguage}`,
     extracted.documentType,
     extracted.fileType,
+    extracted.pageCountDeclared ? `${extracted.pageCountDeclared} pages declared` : null,
     extracted.certificationRequired ? "Certified" : "Non-certified"
   ]
     .filter(Boolean)

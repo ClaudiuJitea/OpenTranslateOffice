@@ -25,6 +25,11 @@ export async function bootstrapDatabase(db: {
       target_lang TEXT NOT NULL,
       status TEXT NOT NULL,
       priority TEXT NOT NULL DEFAULT 'MEDIUM',
+      declared_page_count INTEGER,
+      verified_page_count INTEGER,
+      estimated_minutes INTEGER,
+      scheduled_start_at INTEGER,
+      scheduled_end_at INTEGER,
       certification_required INTEGER NOT NULL DEFAULT 0,
       due_at INTEGER,
       created_at INTEGER NOT NULL
@@ -40,6 +45,21 @@ export async function bootstrapDatabase(db: {
   try {
     db.run(sql`ALTER TABLE jobs ADD COLUMN source_request_id TEXT;`);
   } catch {}
+  try {
+    db.run(sql`ALTER TABLE jobs ADD COLUMN declared_page_count INTEGER;`);
+  } catch {}
+  try {
+    db.run(sql`ALTER TABLE jobs ADD COLUMN verified_page_count INTEGER;`);
+  } catch {}
+  try {
+    db.run(sql`ALTER TABLE jobs ADD COLUMN estimated_minutes INTEGER;`);
+  } catch {}
+  try {
+    db.run(sql`ALTER TABLE jobs ADD COLUMN scheduled_start_at INTEGER;`);
+  } catch {}
+  try {
+    db.run(sql`ALTER TABLE jobs ADD COLUMN scheduled_end_at INTEGER;`);
+  } catch {}
 
   db.run(sql`
     CREATE TABLE IF NOT EXISTS intake_sessions (
@@ -54,6 +74,8 @@ export async function bootstrapDatabase(db: {
       target_language TEXT NOT NULL,
       document_type TEXT NOT NULL,
       file_type TEXT NOT NULL,
+      declared_page_count INTEGER,
+      verified_page_count INTEGER,
       certification_required INTEGER NOT NULL DEFAULT 0,
       deadline_at INTEGER,
       urgency TEXT,
@@ -62,6 +84,7 @@ export async function bootstrapDatabase(db: {
       appointment_at INTEGER,
       notes TEXT,
       status TEXT NOT NULL DEFAULT 'SUBMITTED',
+      deleted_at INTEGER,
       completeness_score INTEGER NOT NULL DEFAULT 100,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
@@ -92,6 +115,20 @@ export async function bootstrapDatabase(db: {
   `);
 
   db.run(sql`
+    CREATE TABLE IF NOT EXISTS call_requests (
+      id TEXT PRIMARY KEY,
+      full_name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      project_summary TEXT NOT NULL,
+      declared_page_count INTEGER NOT NULL,
+      requested_call_at INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+  `);
+
+  db.run(sql`
     CREATE TABLE IF NOT EXISTS intake_chat_sessions (
       id TEXT PRIMARY KEY,
       channel TEXT NOT NULL DEFAULT 'CHAT',
@@ -112,6 +149,15 @@ export async function bootstrapDatabase(db: {
   try {
     db.run(sql`ALTER TABLE intake_chat_sessions ADD COLUMN portal_password_plain TEXT;`);
   } catch {}
+  try {
+    db.run(sql`ALTER TABLE intake_sessions ADD COLUMN declared_page_count INTEGER;`);
+  } catch {}
+  try {
+    db.run(sql`ALTER TABLE intake_sessions ADD COLUMN verified_page_count INTEGER;`);
+  } catch {}
+  try {
+    db.run(sql`ALTER TABLE intake_sessions ADD COLUMN deleted_at INTEGER;`);
+  } catch {}
 
   db.run(sql`
     CREATE TABLE IF NOT EXISTS app_settings (
@@ -130,6 +176,17 @@ export async function bootstrapDatabase(db: {
       assigned_by TEXT NOT NULL,
       active INTEGER NOT NULL DEFAULT 1,
       assigned_at INTEGER NOT NULL
+    );
+  `);
+
+  db.run(sql`
+    CREATE TABLE IF NOT EXISTS job_schedule_allocations (
+      id TEXT PRIMARY KEY,
+      job_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      start_at INTEGER NOT NULL,
+      end_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
     );
   `);
 

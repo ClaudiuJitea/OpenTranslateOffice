@@ -7,6 +7,7 @@ export interface IntakeRequestPayload {
   targetLanguage: string;
   documentType: string;
   fileType: string;
+  pageCountDeclared?: number;
   certificationRequired: boolean;
   deadlineIso?: string;
   urgency?: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -29,6 +30,7 @@ export interface IntakeChatSession {
     | "targetLanguage"
     | "documentType"
     | "fileType"
+    | "pageCountDeclared"
     | "certificationRequired"
     | "urgency"
     | "files"

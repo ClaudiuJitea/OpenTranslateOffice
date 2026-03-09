@@ -14,6 +14,8 @@ export const intakeSessions = sqliteTable(
     targetLanguage: text("target_language").notNull(),
     documentType: text("document_type").notNull(),
     fileType: text("file_type").notNull(),
+    declaredPageCount: integer("declared_page_count"),
+    verifiedPageCount: integer("verified_page_count"),
     certificationRequired: integer("certification_required", {
       mode: "boolean"
     })
@@ -26,6 +28,7 @@ export const intakeSessions = sqliteTable(
     appointmentAt: integer("appointment_at", { mode: "timestamp_ms" }),
     notes: text("notes"),
     status: text("status").notNull().default("SUBMITTED"),
+    deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
     completenessScore: integer("completeness_score").notNull().default(100),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull()

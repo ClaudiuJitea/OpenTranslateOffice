@@ -1,4 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { useSearchParams } from "react-router-dom";
 import { useI18n } from "../../i18n/I18nProvider";
 import { useAuth } from "../auth/AuthProvider";
 import {
@@ -37,6 +39,7 @@ const STATUS_OPTIONS = [
 export function DashboardWorkbenchPage() {
   const { locale } = useI18n();
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const isAdmin = user?.role === "ADMIN";
   const [jobs, setJobs] = useState<JobSummary[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
@@ -47,14 +50,21 @@ export function DashboardWorkbenchPage() {
   const [refuseReason, setRefuseReason] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [selectedSourceDocumentId, setSelectedSourceDocumentId] = useState<string | null>(null);
+  const [selectedConversionFormat, setSelectedConversionFormat] = useState<string>("");
   const [isAiTranslating, setIsAiTranslating] = useState(false);
   const [isSendingToCustomer, setIsSendingToCustomer] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestedJobId = searchParams.get("jobId");
 
   useEffect(() => {
     void refreshJobs();
   }, [statusFilter]);
+
+  useEffect(() => {
+    if (!requestedJobId) return;
+    setSelectedJobId(requestedJobId);
+  }, [requestedJobId]);
 
   useEffect(() => {
     if (!selectedJobId) {
@@ -96,6 +106,10 @@ export function DashboardWorkbenchPage() {
     try {
       const payload = await fetchAssignedJobs(statusFilter || undefined);
       setJobs(payload.items);
+      if (requestedJobId && payload.items.some((item) => item.id === requestedJobId)) {
+        setSelectedJobId(requestedJobId);
+        return;
+      }
       if (!selectedJobId && payload.items.length > 0) {
         setSelectedJobId(payload.items[0].id);
       }
@@ -264,20 +278,41 @@ export function DashboardWorkbenchPage() {
     try {
       const summary = JSON.parse(run.outputSummary) as {
         publishedDeliverableId?: string | null;
+        translatedOriginalName?: string;
+        translatedStorageKey?: string;
+        supportedConversions?: string[];
       };
+      const supportedConversions =
+        summary.supportedConversions && summary.supportedConversions.length > 0
+          ? summary.supportedConversions
+          : inferSupportedConversions(summary.translatedStorageKey ?? summary.translatedOriginalName ?? null);
       return {
         runId: run.id,
         status: run.status,
-        publishedDeliverableId: summary.publishedDeliverableId ?? null
+        publishedDeliverableId: summary.publishedDeliverableId ?? null,
+        translatedOriginalName: summary.translatedOriginalName ?? null,
+        supportedConversions
       };
     } catch {
       return {
         runId: run.id,
         status: run.status,
-        publishedDeliverableId: null
+        publishedDeliverableId: null,
+        translatedOriginalName: null,
+        supportedConversions: []
       };
     }
   }, [detail, selectedSourceDocumentId]);
+
+  useEffect(() => {
+    if (!selectedDocTranslationRun) {
+      setSelectedConversionFormat("");
+      return;
+    }
+
+    const nextFormat = selectedDocTranslationRun.supportedConversions[0] ?? "";
+    setSelectedConversionFormat(nextFormat);
+  }, [selectedDocTranslationRun]);
 
   async function onTranslateSelectedSourceWithAi() {
     if (!detail || !selectedSourceDocumentId) return;
@@ -344,7 +379,7 @@ export function DashboardWorkbenchPage() {
       ) : null}
 
       <section className="grid gap-6 lg:grid-cols-12">
-        <div className="space-y-4 lg:col-span-3">
+        <div className="flex h-full flex-col gap-4 lg:col-span-3">
           <div className="border border-neutral-900 p-4">
             <label htmlFor="statusFilter" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
               {locale === "pl" ? "Filtruj po statusie" : "Filter by status"}
@@ -380,7 +415,7 @@ export function DashboardWorkbenchPage() {
             )}
           </div>
 
-          <div className="flex min-h-[42.5rem] flex-col border border-neutral-900 p-4">
+          <div className="flex min-h-0 flex-1 flex-col border border-neutral-900 p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">
               {locale === "pl" ? "Przypisane zlecenia" : "Assigned Jobs"}
             </p>
@@ -395,7 +430,14 @@ export function DashboardWorkbenchPage() {
                   <button
                     key={job.id}
                     type="button"
-                    onClick={() => setSelectedJobId(job.id)}
+                    onClick={() => {
+                      setSelectedJobId(job.id);
+                      setSearchParams((current) => {
+                        const next = new URLSearchParams(current);
+                        next.set("jobId", job.id);
+                        return next;
+                      });
+                    }}
                     className={`w-full border px-3 py-3 text-left ${
                       selectedJobId === job.id
                         ? "border-neutral-900 bg-neutral-100"
@@ -722,12 +764,39 @@ export function DashboardWorkbenchPage() {
                           </button>
 
                           {selectedDocTranslationRun ? (
-                            <a
-                              href={aiTranslationDownloadUrl(detail.job.id, selectedDocTranslationRun.runId)}
-                              className="inline-flex h-10 items-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em] underline underline-offset-4"
-                            >
-                              {locale === "pl" ? "Pobierz tlumaczenie" : "Download translation"}
-                            </a>
+                            <>
+                              <a
+                                href={aiTranslationDownloadUrl(detail.job.id, selectedDocTranslationRun.runId)}
+                                className="inline-flex h-10 items-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em] underline underline-offset-4"
+                              >
+                                {locale === "pl" ? "Pobierz tlumaczenie" : "Download translation"}
+                              </a>
+                              {selectedDocTranslationRun.supportedConversions.length > 0 ? (
+                                <>
+                                  <select
+                                    value={selectedConversionFormat}
+                                    onChange={(event) => setSelectedConversionFormat(event.target.value)}
+                                    className="h-10 border border-neutral-900 bg-paper px-3 text-xs uppercase tracking-[0.12em]"
+                                  >
+                                    {selectedDocTranslationRun.supportedConversions.map((format) => (
+                                      <option key={format} value={format}>
+                                        {locale === "pl" ? `Konwertuj do ${format.toUpperCase()}` : `Convert to ${format.toUpperCase()}`}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <a
+                                    href={aiTranslationDownloadUrl(
+                                      detail.job.id,
+                                      selectedDocTranslationRun.runId,
+                                      selectedConversionFormat
+                                    )}
+                                    className="inline-flex h-10 items-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em] underline underline-offset-4"
+                                  >
+                                    {locale === "pl" ? "Pobierz konwersje" : "Download conversion"}
+                                  </a>
+                                </>
+                              ) : null}
+                            </>
                           ) : null}
 
                           {selectedDocTranslationRun ? (
@@ -778,7 +847,7 @@ export function DashboardWorkbenchPage() {
         })()
       ) : null}
 
-      {actionModal ? (
+      {actionModal ? createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4" role="presentation">
           <div
             role="dialog"
@@ -888,7 +957,8 @@ export function DashboardWorkbenchPage() {
               </>
             ) : null}
           </div>
-        </div>
+        </div>,
+        document.body
       ) : null}
     </section>
   );
@@ -916,6 +986,12 @@ function localizeStatus(status: string, locale: "en" | "pl") {
     REFUSED: "Odrzucone"
   };
   return map[status] ?? status;
+}
+
+function inferSupportedConversions(fileName: string | null) {
+  const extension = fileName?.split(".").pop()?.toLowerCase() ?? "";
+  const all = ["pdf", "docx", "odt", "rtf", "txt"];
+  return all.filter((format) => format !== extension);
 }
 
 function localizePriority(priority: string, locale: "en" | "pl") {

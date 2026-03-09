@@ -2,7 +2,6 @@ import {
   intakeDocuments,
   intakeMessages,
   intakeSessions,
-  jobAssignments,
   jobs,
   users
 } from "@oto/db";
@@ -20,6 +19,7 @@ import {
   generateRequestNumber,
   hashPortalPassword
 } from "../../services/portal/request-access";
+import { allocateRequestJob } from "../../services/scheduling/request-allocation";
 import intakeChatRoutes from "./intake-chat.routes";
 
 const router = Router();
@@ -105,6 +105,7 @@ router.post("/requests", upload.array("files", 10), async (req, res) => {
     targetLanguage: payload.targetLanguage,
     documentType: payload.documentType,
     fileType: payload.fileType,
+    declaredPageCount: payload.pageCountDeclared ?? null,
     certificationRequired: payload.certificationRequired,
     deadlineAt: payload.deadlineIso ? new Date(payload.deadlineIso) : null,
     urgency: payload.urgency,
@@ -158,19 +159,21 @@ router.post("/requests", upload.array("files", 10), async (req, res) => {
     targetLang: payload.targetLanguage,
     status: "NEW",
     priority: payload.urgency ?? "MEDIUM",
+    declaredPageCount: payload.pageCountDeclared ?? null,
     certificationRequired: payload.certificationRequired,
     dueAt: payload.deadlineIso ? new Date(payload.deadlineIso) : null,
     createdAt: now
   });
 
   if (adminId !== "unassigned") {
-    await db.insert(jobAssignments).values({
-      id: randomUUID(),
+    await allocateRequestJob({
+      sessionId,
       jobId,
-      userId: adminId,
+      declaredPageCount: payload.pageCountDeclared,
+      priority: payload.urgency,
+      explicitDeadlineAt: payload.deadlineIso ? new Date(payload.deadlineIso) : null,
       assignedBy: adminId,
-      active: true,
-      assignedAt: now
+      now
     });
   }
 
@@ -194,7 +197,10 @@ function buildSummary(payload: ReturnType<typeof intakeRequestSchema.parse>) {
     `Email: ${payload.email}`,
     `Language pair: ${payload.sourceLanguage} -> ${payload.targetLanguage}`,
     `Document type: ${payload.documentType}`,
+    payload.pageCountDeclared ? `Declared pages: ${payload.pageCountDeclared}` : null,
     `Certification required: ${payload.certificationRequired ? "Yes" : "No"}`,
     payload.deadlineIso ? `Deadline: ${payload.deadlineIso}` : "Deadline: not provided"
-  ].join(" | ");
+  ]
+    .filter(Boolean)
+    .join(" | ");
 }

@@ -11,6 +11,11 @@ export const jobs = sqliteTable(
     targetLang: text("target_lang").notNull(),
     status: text("status").notNull(),
     priority: text("priority").notNull().default("MEDIUM"),
+    declaredPageCount: integer("declared_page_count"),
+    verifiedPageCount: integer("verified_page_count"),
+    estimatedMinutes: integer("estimated_minutes"),
+    scheduledStartAt: integer("scheduled_start_at", { mode: "timestamp_ms" }),
+    scheduledEndAt: integer("scheduled_end_at", { mode: "timestamp_ms" }),
     certificationRequired: integer("certification_required", {
       mode: "boolean"
     })

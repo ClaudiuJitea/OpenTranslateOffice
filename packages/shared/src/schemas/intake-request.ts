@@ -9,6 +9,7 @@ export const intakeRequestSchema = z.object({
   targetLanguage: z.string().min(2),
   documentType: z.string().min(1),
   fileType: z.string().min(1),
+  pageCountDeclared: z.coerce.number().int().positive().optional(),
   certificationRequired: z.coerce.boolean(),
   deadlineIso: z
     .string()

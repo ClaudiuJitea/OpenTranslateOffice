@@ -4,6 +4,7 @@ import {
   jobDeliverables,
   jobAssignments,
   jobNotes,
+  jobScheduleAllocations,
   jobStatusHistory,
   jobs,
   users
@@ -16,8 +17,14 @@ import { copyFile, mkdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { env } from "../../config/env";
 import { getDb } from "../../db/runtime";
+import { markRequestCancelled, purgeDeletedIntakesIfDue } from "../../services/maintenance/intake-retention";
 import { translateDocumentWithAi } from "../../services/documents/ai-document-translation";
 import { resolveSourcePreview } from "../../services/documents/source-preview";
+import {
+  convertTranslatedDocument,
+  listSupportedConvertedFormats
+} from "../../services/documents/translated-document-conversion";
+import { scheduleJobForSpecificEmployee } from "../../services/scheduling/job-scheduler";
 
 const router = Router();
 const db = getDb();
@@ -115,7 +122,7 @@ router.get("/assignable-users", async (req, res) => {
       role: users.role
     })
     .from(users)
-    .where(and(eq(users.isActive, true), inArray(users.role, ["EMPLOYEE", "ADMIN"])))
+    .where(and(eq(users.isActive, true), eq(users.role, "EMPLOYEE")))
     .orderBy(asc(users.fullName));
 
   return res.json({ items: rows });
@@ -257,7 +264,7 @@ router.post("/:id/assign", async (req, res) => {
     .where(eq(users.id, assigneeUserId))
     .limit(1);
   const assignee = userRows[0];
-  if (!assignee || !assignee.isActive || (assignee.role !== "EMPLOYEE" && assignee.role !== "ADMIN")) {
+  if (!assignee || !assignee.isActive || assignee.role !== "EMPLOYEE") {
     return res.status(400).json({ error: "Invalid assignee" });
   }
 
@@ -267,19 +274,41 @@ router.post("/:id/assign", async (req, res) => {
     return res.status(404).json({ error: "Job not found" });
   }
 
-  await db
-    .update(jobAssignments)
-    .set({ active: false })
-    .where(and(eq(jobAssignments.jobId, jobId), eq(jobAssignments.active, true)));
-
-  await db.insert(jobAssignments).values({
-    id: randomUUID(),
+  const estimatedMinutes = job.estimatedMinutes ?? 60;
+  const schedule = await scheduleJobForSpecificEmployee({
     jobId,
     userId: assigneeUserId,
+    priority: job.priority,
+    explicitDeadlineAt: job.dueAt,
+    estimatedMinutes,
     assignedBy: authUser.id,
-    active: true,
-    assignedAt: new Date()
+    now: new Date()
   });
+
+  if (schedule) {
+    await db.update(jobs).set({
+      scheduledStartAt: schedule.scheduledStartAt,
+      scheduledEndAt: schedule.scheduledEndAt,
+      dueAt: schedule.effectiveDeadlineAt
+    }).where(eq(jobs.id, jobId));
+  }
+
+  if (!schedule) {
+    await db
+      .update(jobAssignments)
+      .set({ active: false })
+      .where(and(eq(jobAssignments.jobId, jobId), eq(jobAssignments.active, true)));
+    await db.delete(jobScheduleAllocations).where(eq(jobScheduleAllocations.jobId, jobId));
+
+    await db.insert(jobAssignments).values({
+      id: randomUUID(),
+      jobId,
+      userId: assigneeUserId,
+      assignedBy: authUser.id,
+      active: true,
+      assignedAt: new Date()
+    });
+  }
 
   return res.json({ ok: true });
 });
@@ -319,12 +348,23 @@ router.delete("/:id", async (req, res) => {
   }
 
   const jobId = String(req.params.id);
+  const rows = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
+  const job = rows[0];
+  if (!job) {
+    return res.status(404).json({ error: "Job not found" });
+  }
+
+  if (job.sourceRequestId) {
+    await markRequestCancelled(job.sourceRequestId, new Date());
+  }
+
   await db.delete(jobAssignments).where(eq(jobAssignments.jobId, jobId));
   await db.delete(jobStatusHistory).where(eq(jobStatusHistory.jobId, jobId));
   await db.delete(jobNotes).where(eq(jobNotes.jobId, jobId));
   await db.delete(aiRuns).where(eq(aiRuns.jobId, jobId));
   await db.delete(jobDeliverables).where(eq(jobDeliverables.jobId, jobId));
   await db.delete(jobs).where(eq(jobs.id, jobId));
+  await purgeDeletedIntakesIfDue();
 
   return res.json({ ok: true });
 });
@@ -589,6 +629,7 @@ router.post("/:id/source-documents/:docId/translate-ai", async (req, res) => {
       translatedOriginalName: result.originalName,
       translatedMimeType: result.mimeType,
       translatedSizeBytes: result.sizeBytes,
+      supportedConversions: listSupportedConvertedFormats(result.storageKey),
       sourceFamily: result.sourceFamily,
       publishedDeliverableId: null
     });
@@ -606,22 +647,22 @@ router.post("/:id/source-documents/:docId/translate-ai", async (req, res) => {
       status: "COMPLETED"
     });
   } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "AI document translation failed";
+
     await db
       .update(aiRuns)
       .set({
         status: "FAILED",
         outputSummary: JSON.stringify({
           sourceDocumentId: doc.id,
-          error: error instanceof Error ? error.message : "Unknown translation failure"
+          error: message
         })
       })
       .where(eq(aiRuns.id, runId));
 
-    return res.status(500).json({
-      error:
-        error instanceof Error
-          ? error.message
-          : "AI document translation failed"
+    return res.status(message.includes("settings are incomplete") ? 400 : 500).json({
+      error: message
     });
   }
 });
@@ -660,6 +701,22 @@ router.get("/:id/ai-translations/:runId/download", async (req, res) => {
   const summary = parseTranslationSummary(run.outputSummary);
   if (!summary?.translatedStorageKey) {
     return res.status(404).json({ error: "Translation output not found" });
+  }
+
+  const requestedFormat = String(req.query.format ?? "").trim().toLowerCase();
+  if (requestedFormat) {
+    try {
+      const converted = await convertTranslatedDocument({
+        storageKey: summary.translatedStorageKey,
+        originalName: summary.translatedOriginalName ?? `translated-${runId}`,
+        targetFormat: requestedFormat
+      });
+      return res.type(converted.mimeType).download(converted.filePath, converted.fileName);
+    } catch (error) {
+      return res.status(400).json({
+        error: error instanceof Error ? error.message : "Unable to convert translated file"
+      });
+    }
   }
 
   const fullPath = path.resolve(aiTranslationsDir, summary.translatedStorageKey);
@@ -779,9 +836,10 @@ function parseTranslationSummary(value: string): {
   translatedMimeType?: string;
   translatedSizeBytes?: number;
   publishedDeliverableId?: string | null;
+  supportedConversions?: string[];
 } | null {
   try {
-    return JSON.parse(value) as {
+    const parsed = JSON.parse(value) as {
       sourceDocumentId?: string;
       translatedStorageKey?: string;
       translatedOriginalName?: string;
@@ -789,6 +847,12 @@ function parseTranslationSummary(value: string): {
       translatedSizeBytes?: number;
       publishedDeliverableId?: string | null;
     };
+    return parsed.translatedStorageKey
+      ? {
+          ...parsed,
+          supportedConversions: listSupportedConvertedFormats(parsed.translatedStorageKey)
+        }
+      : parsed;
   } catch {
     return null;
   }

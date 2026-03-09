@@ -25,6 +25,12 @@ export function LandingPage() {
               {t("landing.cta.request")}
             </Link>
             <Link
+              to="/request-call"
+              className="border border-neutral-900 px-6 py-3 text-sm uppercase tracking-[0.16em] transition-colors hover:bg-neutral-100"
+            >
+              {locale === "pl" ? "Zamow telefon" : "Request a Call"}
+            </Link>
+            <Link
               to="/intake/chat"
               className="border border-neutral-900 px-6 py-3 text-sm uppercase tracking-[0.16em] underline underline-offset-4 transition-colors hover:bg-neutral-100"
             >
