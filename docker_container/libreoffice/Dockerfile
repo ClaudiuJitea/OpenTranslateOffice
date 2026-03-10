@@ -1,9 +1,12 @@
 FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
+ARG LIBREOFFICE_FONT_PACKAGES=""
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
+RUN set -eux; \
+  extra_font_packages="$(printf '%s' "$LIBREOFFICE_FONT_PACKAGES" | tr ',' ' ')"; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
     libreoffice \
     libreoffice-writer \
     libreoffice-core \
@@ -23,7 +26,9 @@ RUN apt-get update \
     fonts-liberation \
     fonts-noto-core \
     ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+    $extra_font_packages; \
+  fc-cache -f; \
+  rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace
 

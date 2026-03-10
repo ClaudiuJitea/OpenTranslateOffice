@@ -10,3 +10,4 @@ apps/api/dev.sqlite
 coverage
 .DS_Store
 *.tsbuildinfo
+docker_container/.libreoffice-deploy.env

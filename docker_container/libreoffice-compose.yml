@@ -2,6 +2,8 @@ services:
   libreoffice:
     build:
       context: ./libreoffice
+      args:
+        LIBREOFFICE_FONT_PACKAGES: ${LIBREOFFICE_FONT_PACKAGES:-}
     container_name: ${LIBREOFFICE_CONTAINER_NAME:-oto-libreoffice}
     restart: unless-stopped
     volumes:
