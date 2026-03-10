@@ -17,23 +17,72 @@ export function CallRequestPage() {
     event.preventDefault();
     setError(null);
 
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const fullName = String(form.get("fullName") ?? "").trim();
+    const phone = String(form.get("phone") ?? "").trim();
+    const projectSummary = String(form.get("projectSummary") ?? "").trim();
+    const declaredPageCount = Number(form.get("declaredPageCount"));
+    const requestedCallAtRaw = String(form.get("requestedCallAt") ?? "").trim();
+
+    if (!fullName) {
+      setError(locale === "pl" ? "Imie i nazwisko jest wymagane." : "Full name is required.");
+      setState("error");
+      return;
+    }
+
+    if (phone.length < 5) {
+      setError(locale === "pl" ? "Numer telefonu jest za krotki." : "Phone number is too short.");
+      setState("error");
+      return;
+    }
+
+    if (projectSummary.length < 10) {
+      setError(
+        locale === "pl"
+          ? "Opis projektu musi miec co najmniej 10 znakow."
+          : "Project summary must be at least 10 characters."
+      );
+      setState("error");
+      return;
+    }
+
+    if (!Number.isInteger(declaredPageCount) || declaredPageCount <= 0) {
+      setError(
+        locale === "pl"
+          ? "Liczba stron musi byc dodatnia liczba calkowita."
+          : "Number of pages must be a positive whole number."
+      );
+      setState("error");
+      return;
+    }
+
+    if (!requestedCallAtRaw) {
+      setError(
+        locale === "pl"
+          ? "Data i godzina telefonu sa wymagane."
+          : "Preferred call date and time are required."
+      );
+      setState("error");
+      return;
+    }
+
     setState("submitting");
 
     try {
-      const requestedCallAtIso = new Date(String(form.get("requestedCallAt"))).toISOString();
+      const requestedCallAtIso = new Date(requestedCallAtRaw).toISOString();
       const item = await createCallRequest({
-        fullName: String(form.get("fullName") ?? "").trim(),
-        phone: String(form.get("phone") ?? "").trim(),
-        projectSummary: String(form.get("projectSummary") ?? "").trim(),
-        declaredPageCount: Number(form.get("declaredPageCount")),
+        fullName,
+        phone,
+        projectSummary,
+        declaredPageCount,
         requestedCallAtIso
       });
 
       setSubmittedName(item.fullName);
       setSubmittedCallAt(item.requestedCallAt);
       setState("success");
-      event.currentTarget.reset();
+      formElement.reset();
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
@@ -97,6 +146,8 @@ export function CallRequestPage() {
           name="declaredPageCount"
           type="number"
           required
+          min={1}
+          step={1}
           placeholder={locale === "pl" ? "np. 12" : "e.g. 12"}
         />
         <div className="space-y-2">
@@ -164,13 +215,17 @@ function Field({
   name,
   type = "text",
   required,
-  placeholder
+  placeholder,
+  min,
+  step
 }: {
   label: string;
   name: string;
   type?: string;
   required?: boolean;
   placeholder?: string;
+  min?: number;
+  step?: number;
 }) {
   return (
     <div className="space-y-2">
@@ -183,6 +238,8 @@ function Field({
         type={type}
         required={required}
         placeholder={placeholder}
+        min={min}
+        step={step}
         className="w-full border border-neutral-900 bg-paper px-3 py-3"
       />
     </div>

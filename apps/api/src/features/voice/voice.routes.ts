@@ -21,10 +21,29 @@ router.post("/session", async (req, res) => {
   return res.status(201).json(session);
 });
 
-router.post("/events", async (req, res) => {
-  const signature = String(req.headers["x-elevenlabs-signature"] ?? "");
-  await service.handleWebhookEvent(req.body, signature);
-  return res.status(204).send();
+router.post("/sync", async (req, res) => {
+  const conversationId = String(req.body?.conversationId ?? "").trim();
+  if (!conversationId) {
+    return res.status(400).json({ error: "conversationId is required" });
+  }
+
+  try {
+    const result = await service.syncConversationData(conversationId);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Error syncing conversation:", error);
+    return res.status(500).json({ error: "Failed to sync conversation data" });
+  }
+});
+
+router.post("/sync-latest", async (req, res) => {
+  try {
+    const result = await service.syncNewConversationData();
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Error syncing latest conversation:", error);
+    return res.status(500).json({ error: "Failed to sync latest conversation" });
+  }
 });
 
 export default router;

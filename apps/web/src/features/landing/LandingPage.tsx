@@ -1,8 +1,45 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n/I18nProvider";
 
 export function LandingPage() {
   const { t, locale } = useI18n();
+
+  useEffect(() => {
+    const existingScript = document.querySelector(
+      'script[src="https://unpkg.com/@elevenlabs/convai-widget-embed"]'
+    );
+
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/@elevenlabs/convai-widget-embed";
+      script.async = true;
+      script.type = "text/javascript";
+      document.body.appendChild(script);
+    }
+
+    const handleCallEnd = async (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const { status, conversationId } = customEvent.detail || {};
+      if (status === "disconnected" && conversationId) {
+        try {
+          const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+          await fetch(`${API_BASE_URL}/api/voice/sync`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ conversationId })
+          });
+        } catch (error) {
+          console.error("Failed to sync conversation data:", error);
+        }
+      }
+    };
+    window.addEventListener("elevenlabs-convai:call", handleCallEnd);
+
+    return () => {
+      window.removeEventListener("elevenlabs-convai:call", handleCallEnd);
+    };
+  }, []);
 
   return (
     <div className="space-y-20">
@@ -46,25 +83,41 @@ export function LandingPage() {
             </Link>
           </div>
         </div>
-        <aside className="space-y-4 border-l border-neutral-900 pl-6 md:col-span-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-neutral-700">{t("landing.trust")}</p>
-          <ul className="space-y-3 text-sm leading-6">
-            {locale === "pl" ? (
-              <>
-                <li>Ponad 120 par jezykowych</li>
-                <li>Tlumaczenia przysiegle i certyfikowane</li>
-                <li>Priorytetowa obsluga zlecen pilnych</li>
-                <li>Poufna i audytowalna obsluga dokumentow</li>
-              </>
-            ) : (
-              <>
-                <li>120+ language pairs</li>
-                <li>Certified translations with sworn workflows</li>
-                <li>Same-day triage for urgent requests</li>
-                <li>Confidential handling and auditable delivery</li>
-              </>
-            )}
-          </ul>
+        <aside className="flex h-full flex-col gap-4 border-l border-neutral-900 pl-6 md:col-span-4">
+          <div className="space-y-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-neutral-700">{t("landing.trust")}</p>
+            <ul className="space-y-3 text-sm leading-6">
+              {locale === "pl" ? (
+                <>
+                  <li>Ponad 120 par jezykowych</li>
+                  <li>Tlumaczenia przysiegle i certyfikowane</li>
+                  <li>Priorytetowa obsluga zlecen pilnych</li>
+                  <li>Poufna i audytowalna obsluga dokumentow</li>
+                </>
+              ) : (
+                <>
+                  <li>120+ language pairs</li>
+                  <li>Certified translations with sworn workflows</li>
+                  <li>Same-day triage for urgent requests</li>
+                  <li>Confidential handling and auditable delivery</li>
+                </>
+              )}
+            </ul>
+          </div>
+
+          <div className="mt-auto border border-neutral-900 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-neutral-700">
+              {locale === "pl" ? "Asystent glosowy" : "Voice Assistant"}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-neutral-800">
+              {locale === "pl"
+                ? "Mozesz od razu porozmawiac z naszym asystentem glosowym."
+                : "You can also speak with our voice assistant right away."}
+            </p>
+            <div className="mt-4">
+              <elevenlabs-convai agent-id="TE2whnZuzf9NnKgTyO35"></elevenlabs-convai>
+            </div>
+          </div>
         </aside>
       </section>
 

@@ -31,7 +31,6 @@ export const envSchema = z.object({
   ELEVENLABS_BASE_URL: z.string().url().default("https://api.elevenlabs.io"),
   ELEVENLABS_API_KEY: optionalNonEmptyString,
   ELEVENLABS_AGENT_ID: optionalNonEmptyString,
-  ELEVENLABS_WEBHOOK_SECRET: optionalNonEmptyString,
   FILE_STORAGE_DRIVER: z.enum(["local", "s3"]).default("local"),
   LOCAL_STORAGE_PATH: z.string().default("./storage"),
   LIBREOFFICE_PREVIEW_ENABLED: booleanString,

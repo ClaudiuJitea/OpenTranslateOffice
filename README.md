@@ -1,21 +1,22 @@
 # OpenTranslateOffice
 
-OpenTranslateOffice is a full-stack translation agency platform for customer intake, translator operations, document handling, and AI-assisted workflows.
+OpenTranslateOffice is a full-stack translation agency platform for customer intake, translator operations, document handling, callback management, and AI-assisted workflows.
 
 It combines:
 
-- a premium public landing page
-- structured request intake by form, chat, and voice-ready architecture
-- an employee translation workbench
-- a customer portal for request tracking and file delivery
+- a polished public website for request intake and callback requests
+- structured intake by form, AI chat, and ElevenLabs voice collection
+- a translator workbench with previews, notes, delivery, and AI document tools
+- an admin console for staff management, integrations, and scheduling
+- a callback queue that keeps website and ElevenLabs-originated requests separate
 - local development storage with a Docker-managed LibreOffice conversion service
 
 ## Product Scope
 
 The project is designed around two user groups:
 
-- Customers: submit documents, define translation requirements, receive tracking credentials, and download delivered files
-- Employees/Admins: manage intake, review source files, assign translators, translate and deliver documents, and manage integrations
+- Customers: submit documents, define translation requirements, request callbacks, receive tracking credentials, and download delivered files
+- Employees/Admins: manage intake, callbacks, schedules, review source files, assign translators, translate and deliver documents, and manage integrations
 
 ## Tech Stack
 
@@ -46,19 +47,42 @@ The project is designed around two user groups:
 
 - OpenRouter as the external LLM gateway
 - Default model: `google/gemini-3.1-flash-lite-preview`
-- ElevenLabs integration points for browser voice intake
+- ElevenLabs ConvAI widget for browser voice intake and callback capture
 
 ## Current Feature Set
 
-- Public marketing and intake landing page
-- Customer request form with file upload
-- AI-assisted intake chat with structured field extraction
-- Customer request tracking portal using request number and password
-- Employee dashboard and translation workbench
-- Admin area for translators and integration settings
-- Source document preview support
-- Deliverable upload and customer download flow
-- AI-assisted document translation pipeline
+- Public landing page with request intake, callback intake, and embedded ElevenLabs voice assistant
+- Standard request submission with multi-file upload and customer portal credential generation
+- AI-assisted intake chat that asks for missing details progressively instead of dumping a full checklist
+- Customer callback request flow with preferred call time and project summary
+- Callback queue for staff with:
+  - source tracking (`WEB` vs `ELEVENLABS`)
+  - status management (`PENDING`, `SCHEDULED`, `COMPLETED`, `CANCELLED`)
+  - import of all new ElevenLabs conversations since the last successful sync
+  - delete/filter controls for queue cleanup
+- Customer portal with request login, delivered-file downloads, and cancelled/deleted request lifecycle handling
+- Translator workbench with:
+  - status transitions
+  - assignment and reassignment
+  - internal notes
+  - final deliverable upload
+  - source document preview
+  - AI translation actions
+  - translated-file conversion via LibreOffice-supported formats
+- Admin console with:
+  - user creation
+  - role management
+  - account deactivation and guarded deletion
+  - reset-password modal flow
+  - integration settings for OpenRouter and ElevenLabs
+- Dedicated work calendar page for scheduled employee workload
+- Scheduling engine that:
+  - estimates work from page count
+  - uses 20 minutes per page
+  - avoids assigning automated work to admin users
+  - allocates work to employees on a rota
+  - respects urgency windows for standard, next-day, and same-day jobs
+- Verified or inferred page-count support for scheduling and intake review
 - Docker tooling for LibreOffice deployment, restart, stop, and cleanup
 - English and Polish UI support
 
@@ -66,23 +90,23 @@ The project is designed around two user groups:
 
 ### Landing Page
 
-![Landing page](./screenshot/Screenshot%20From%202026-03-08%2015-40-31.png)
+![Landing page](./screenshot/Screenshot%20From%202026-03-10%2005-09-31.png)
 
-### Intake Flow
+### AI Intake Assistant
 
-![AI intake flow](./screenshot/Screenshot%20From%202026-03-08%2015-40-42.png)
+![AI intake flow](./screenshot/Screenshot%20From%202026-03-10%2005-09-48.png)
 
 ### Translator Workbench
 
-![Translator workbench](./screenshot/Screenshot%20From%202026-03-08%2015-40-47.png)
+![Translator workbench](./screenshot/Screenshot%20From%202026-03-10%2005-09-55.png)
 
-### Document Viewer
+### Work Calendar
 
-![Document viewer](./screenshot/Screenshot%20From%202026-03-08%2015-41-19.png)
+![Work calendar](./screenshot/Screenshot%20From%202026-03-10%2005-10-44.png)
 
-### Admin and Operations
+### Callback Request Form
 
-![Admin console](./screenshot/Screenshot%20From%202026-03-08%2015-41-29.png)
+![Callback request form](./screenshot/Screenshot%20From%202026-03-10%2005-10-56.png)
 
 ## Monorepo Structure
 
@@ -119,7 +143,6 @@ Then fill in the values you actually need, especially:
 - `OPENROUTER_API_KEY`
 - `ELEVENLABS_API_KEY`
 - `ELEVENLABS_AGENT_ID`
-- `ELEVENLABS_WEBHOOK_SECRET`
 
 ### 3. Start the LibreOffice conversion container
 
@@ -163,6 +186,8 @@ API:
 
 - `http://localhost:4000`
 
+The API dev server runs in watch mode and reloads route changes automatically.
+
 ## Workspace Commands
 
 ```bash
@@ -173,15 +198,6 @@ npm run typecheck
 npm run db:generate
 npm run db:push
 ```
-
-## Default Local Login
-
-On first API start, the application seeds a default admin account:
-
-- Email: `admin@oto.local`
-- Password: `change-this-admin-password`
-
-This is for local development only. Change it immediately in any non-local environment.
 
 ## Document Handling Notes
 
@@ -211,22 +227,14 @@ This repository is now prepared so that:
 - local SQLite database is ignored
 - `.env.example` remains safe to commit
 
-## GitHub Upload Checklist
-
-- Review `git diff` before first commit
-- Confirm `.env` contains no real secrets
-- Confirm `apps/api/dev.sqlite` is not tracked
-- Confirm `storage/` is not tracked
-- Confirm screenshots in `screenshot/` are intentional to publish
-
 ## Status
 
 This is an active build, not a finished commercial release. The foundation is in place, but some advanced areas still need hardening:
 
-- scanned-PDF translation fidelity
+- deeper ElevenLabs automation beyond queue sync
 - background job orchestration
 - production auth hardening
-- audit and notification depth
+- notification depth
 - broader localization coverage
 - deployment automation beyond local Docker tooling
 

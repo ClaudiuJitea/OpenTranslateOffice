@@ -117,6 +117,7 @@ export async function bootstrapDatabase(db: {
   db.run(sql`
     CREATE TABLE IF NOT EXISTS call_requests (
       id TEXT PRIMARY KEY,
+      source TEXT NOT NULL DEFAULT 'WEB',
       full_name TEXT NOT NULL,
       phone TEXT NOT NULL,
       project_summary TEXT NOT NULL,
@@ -127,6 +128,9 @@ export async function bootstrapDatabase(db: {
       updated_at INTEGER NOT NULL
     );
   `);
+  try {
+    db.run(sql`ALTER TABLE call_requests ADD COLUMN source TEXT NOT NULL DEFAULT 'WEB';`);
+  } catch {}
 
   db.run(sql`
     CREATE TABLE IF NOT EXISTS intake_chat_sessions (

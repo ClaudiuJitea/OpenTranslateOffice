@@ -13,8 +13,7 @@ const DEFAULTS = {
   voiceProvider: env.VOICE_PROVIDER,
   elevenlabsBaseUrl: env.ELEVENLABS_BASE_URL,
   elevenlabsApiKey: env.ELEVENLABS_API_KEY ?? "",
-  elevenlabsAgentId: env.ELEVENLABS_AGENT_ID ?? "",
-  elevenlabsWebhookSecret: env.ELEVENLABS_WEBHOOK_SECRET ?? ""
+  elevenlabsAgentId: env.ELEVENLABS_AGENT_ID ?? ""
 } as const;
 
 const KEYS = Object.keys(DEFAULTS) as Array<keyof typeof DEFAULTS>;
@@ -37,10 +36,6 @@ export async function getIntegrationSettings(): Promise<IntegrationSettings> {
     map.get("elevenlabsApiKey"),
     DEFAULTS.elevenlabsApiKey
   );
-  const elevenlabsWebhookSecret = normalizeSecretValue(
-    map.get("elevenlabsWebhookSecret"),
-    DEFAULTS.elevenlabsWebhookSecret
-  );
 
   return {
     llmProvider: (map.get("llmProvider") ?? DEFAULTS.llmProvider) as IntegrationSettings["llmProvider"],
@@ -50,8 +45,7 @@ export async function getIntegrationSettings(): Promise<IntegrationSettings> {
     voiceProvider: (map.get("voiceProvider") ?? DEFAULTS.voiceProvider) as IntegrationSettings["voiceProvider"],
     elevenlabsBaseUrl: map.get("elevenlabsBaseUrl") ?? DEFAULTS.elevenlabsBaseUrl,
     elevenlabsApiKey,
-    elevenlabsAgentId: map.get("elevenlabsAgentId") ?? DEFAULTS.elevenlabsAgentId,
-    elevenlabsWebhookSecret
+    elevenlabsAgentId: map.get("elevenlabsAgentId") ?? DEFAULTS.elevenlabsAgentId
   };
 }
 
@@ -92,8 +86,7 @@ export function redactSecrets(settings: IntegrationSettings) {
   return {
     ...settings,
     openrouterApiKey: mask(settings.openrouterApiKey),
-    elevenlabsApiKey: mask(settings.elevenlabsApiKey),
-    elevenlabsWebhookSecret: mask(settings.elevenlabsWebhookSecret)
+    elevenlabsApiKey: mask(settings.elevenlabsApiKey)
   };
 }
 

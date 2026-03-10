@@ -59,7 +59,6 @@ export function AdminSettingsPage() {
     try {
       const openrouterApiKey = String(formData.get("openrouterApiKey") ?? "").trim();
       const elevenlabsApiKey = String(formData.get("elevenlabsApiKey") ?? "").trim();
-      const elevenlabsWebhookSecret = String(formData.get("elevenlabsWebhookSecret") ?? "").trim();
       const openrouterBaseUrl = String(formData.get("openrouterBaseUrl") ?? "").trim();
       const openrouterModel = String(formData.get("openrouterModel") ?? "").trim();
       const elevenlabsBaseUrl = String(formData.get("elevenlabsBaseUrl") ?? "").trim();
@@ -71,8 +70,7 @@ export function AdminSettingsPage() {
         ...(elevenlabsBaseUrl ? { elevenlabsBaseUrl } : {}),
         ...(elevenlabsAgentId ? { elevenlabsAgentId } : {}),
         ...(openrouterApiKey ? { openrouterApiKey } : {}),
-        ...(elevenlabsApiKey ? { elevenlabsApiKey } : {}),
-        ...(elevenlabsWebhookSecret ? { elevenlabsWebhookSecret } : {})
+        ...(elevenlabsApiKey ? { elevenlabsApiKey } : {})
       });
       setSettings(updated);
       setNotice(
@@ -435,7 +433,6 @@ export function AdminSettingsPage() {
               <Field label={locale === "pl" ? "ElevenLabs Base URL" : "ElevenLabs Base URL"} name="elevenlabsBaseUrl" defaultValue={settings.elevenlabsBaseUrl} required />
               <Field label={locale === "pl" ? "Klucz API ElevenLabs" : "ElevenLabs API Key"} name="elevenlabsApiKey" placeholder={settings.elevenlabsApiKey || (locale === "pl" ? "Nie ustawiono" : "Not set")} type="password" />
               <Field label={locale === "pl" ? "ID agenta ElevenLabs" : "ElevenLabs Agent ID"} name="elevenlabsAgentId" defaultValue={settings.elevenlabsAgentId} />
-              <Field label={locale === "pl" ? "Sekret webhooka ElevenLabs" : "ElevenLabs Webhook Secret"} name="elevenlabsWebhookSecret" placeholder={settings.elevenlabsWebhookSecret || (locale === "pl" ? "Nie ustawiono" : "Not set")} type="password" />
             </div>
           </section>
 

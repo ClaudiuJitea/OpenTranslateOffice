@@ -7,7 +7,6 @@ export interface IntegrationSettings {
   elevenlabsBaseUrl: string;
   elevenlabsApiKey: string;
   elevenlabsAgentId: string;
-  elevenlabsWebhookSecret: string;
 }
 
 export interface AdminUser {

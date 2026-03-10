@@ -4,6 +4,7 @@ export const callRequests = sqliteTable(
   "call_requests",
   {
     id: text("id").primaryKey(),
+    source: text("source").notNull().default("WEB"),
     fullName: text("full_name").notNull(),
     phone: text("phone").notNull(),
     projectSummary: text("project_summary").notNull(),
