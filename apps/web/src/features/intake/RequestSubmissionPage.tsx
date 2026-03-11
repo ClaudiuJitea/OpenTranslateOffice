@@ -75,7 +75,7 @@ export function RequestSubmissionPage() {
         submissionError instanceof Error
           ? submissionError.message
           : locale === "pl"
-            ? "Nie mozna wyslac zgloszenia."
+            ? "Nie można wysłać zgłoszenia."
             : "Unable to submit request."
       );
       setState("error");
@@ -94,37 +94,37 @@ export function RequestSubmissionPage() {
 
       {state === "success" ? (
         <section className="border border-neutral-900 bg-paper p-6" aria-live="polite">
-          <h2 className="text-2xl font-semibold tracking-tight">{locale === "pl" ? "Zgloszenie wyslane" : "Request Submitted"}</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">{locale === "pl" ? "Zgłoszenie wysłane" : "Request Submitted"}</h2>
           <p className="mt-2">{locale === "pl" ? "ID referencyjne:" : "Reference ID:"} {sessionId}</p>
-          {requestNumber ? <p className="mt-1">{locale === "pl" ? "Numer zgloszenia:" : "Request Number:"} {requestNumber}</p> : null}
+          {requestNumber ? <p className="mt-1">{locale === "pl" ? "Numer zgłoszenia:" : "Request Number:"} {requestNumber}</p> : null}
           {portalPassword ? (
             <p className="mt-1">
-              {locale === "pl" ? "Haslo portalowe:" : "Portal Password:"} <span className="font-semibold">{portalPassword}</span>
+              {locale === "pl" ? "Hasło portalowe:" : "Portal Password:"} <span className="font-semibold">{portalPassword}</span>
             </p>
           ) : null}
           <p className="mt-2 text-sm text-neutral-700">
             {locale === "pl"
-              ? "Zapisz te dane. Sluza do sledzenia statusu i pobrania finalnych plikow."
+              ? "Zapisz te dane. Służą do śledzenia statusu i pobrania finalnych plików."
               : "Save these credentials. They are used to track status and download final translated files."}
           </p>
           <Link className="mt-3 inline-block underline underline-offset-4" to="/portal/login">
-            {locale === "pl" ? "Otworz portal klienta" : "Open Customer Portal"}
+            {locale === "pl" ? "Otwórz portal klienta" : "Open Customer Portal"}
           </Link>
           <Link className="mt-4 inline-block underline underline-offset-4" to="/">
-            {locale === "pl" ? "Wroc na strone glowna" : "Return to homepage"}
+            {locale === "pl" ? "Wróć na stronę główną" : "Return to homepage"}
           </Link>
         </section>
       ) : null}
 
       <form onSubmit={onSubmit} className="grid gap-8 md:grid-cols-2" noValidate>
-        <Field label={locale === "pl" ? "Imie i nazwisko" : "Full Name"} name="fullName" required />
+        <Field label={locale === "pl" ? "Imię i nazwisko" : "Full Name"} name="fullName" required />
         <Field label={locale === "pl" ? "Nazwa firmy" : "Company Name"} name="companyName" />
         <Field label={locale === "pl" ? "Email" : "Email"} name="email" type="email" required />
         <Field label={locale === "pl" ? "Telefon" : "Phone"} name="phone" />
-        <Field label={locale === "pl" ? "Jezyk zrodlowy" : "Source Language"} name="sourceLanguage" required placeholder={locale === "pl" ? "np. Niemiecki" : "e.g. German"} />
-        <Field label={locale === "pl" ? "Jezyk docelowy" : "Target Language"} name="targetLanguage" required placeholder={locale === "pl" ? "np. Angielski" : "e.g. English"} />
+        <Field label={locale === "pl" ? "Język źródłowy" : "Source Language"} name="sourceLanguage" required placeholder={locale === "pl" ? "np. Niemiecki" : "e.g. German"} />
+        <Field label={locale === "pl" ? "Język docelowy" : "Target Language"} name="targetLanguage" required placeholder={locale === "pl" ? "np. Angielski" : "e.g. English"} />
         <Field label={locale === "pl" ? "Typ dokumentu" : "Document Type"} name="documentType" required placeholder={locale === "pl" ? "Umowa, akt, instrukcja" : "Contract, certificate, manual"} />
-        <Field label={locale === "pl" ? "Glowny typ pliku" : "Primary File Type"} name="fileType" required placeholder="PDF, DOCX" />
+        <Field label={locale === "pl" ? "Główny typ pliku" : "Primary File Type"} name="fileType" required placeholder="PDF, DOCX" />
         <Field
           label={locale === "pl" ? "Liczba stron (szacunkowo)" : "Estimated Page Count"}
           name="pageCountDeclared"
@@ -158,7 +158,7 @@ export function RequestSubmissionPage() {
           </select>
         </div>
 
-        <Field label={locale === "pl" ? "Sposob dostawy" : "Delivery Method"} name="deliveryMethod" placeholder={locale === "pl" ? "Email, portal bezpieczny" : "Email, secure portal"} />
+        <Field label={locale === "pl" ? "Sposób dostawy" : "Delivery Method"} name="deliveryMethod" placeholder={locale === "pl" ? "Email, portal bezpieczny" : "Email, secure portal"} />
 
         <div className="space-y-2">
           <label htmlFor="appointmentType" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
@@ -194,13 +194,13 @@ export function RequestSubmissionPage() {
         <div className="space-y-3 md:col-span-2">
           <label className="inline-flex items-center gap-3">
             <input name="certificationRequired" type="checkbox" className="h-5 w-5 border-neutral-900" />
-            <span className="text-sm">{locale === "pl" ? "Wymagane tlumaczenie certyfikowane" : "Certified translation is required"}</span>
+            <span className="text-sm">{locale === "pl" ? "Wymagane tłumaczenie certyfikowane" : "Certified translation is required"}</span>
           </label>
         </div>
 
         <div className="space-y-2 md:col-span-2">
           <label htmlFor="files" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-            {locale === "pl" ? "Przeslij dokumenty" : "Upload Documents"}
+            {locale === "pl" ? "Prześlij dokumenty" : "Upload Documents"}
           </label>
           <input
             id="files"
@@ -213,7 +213,7 @@ export function RequestSubmissionPage() {
           />
           <p className="text-sm text-neutral-700">
             {locale === "pl"
-              ? "Obslugiwane: PDF, DOC, DOCX, TXT, RTF, ODT. Maksymalnie 10 plikow, 25MB kazdy."
+              ? "Obsługiwane: PDF, DOC, DOCX, TXT, RTF, ODT. Maksymalnie 10 plików, 25MB każdy."
               : "Supported: PDF, DOC, DOCX, TXT, RTF, ODT. Maximum 10 files, 25MB each."}
           </p>
         </div>

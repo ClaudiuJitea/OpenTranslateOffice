@@ -65,7 +65,7 @@ export function LandingPage() {
               to="/request-call"
               className="border border-neutral-900 px-6 py-3 text-sm uppercase tracking-[0.16em] transition-colors hover:bg-neutral-100"
             >
-              {locale === "pl" ? "Zamow telefon" : "Request a Call"}
+              {locale === "pl" ? "Zamów telefon" : "Request a Call"}
             </Link>
             <Link
               to="/intake/chat"
@@ -89,10 +89,10 @@ export function LandingPage() {
             <ul className="space-y-3 text-sm leading-6">
               {locale === "pl" ? (
                 <>
-                  <li>Ponad 120 par jezykowych</li>
-                  <li>Tlumaczenia przysiegle i certyfikowane</li>
-                  <li>Priorytetowa obsluga zlecen pilnych</li>
-                  <li>Poufna i audytowalna obsluga dokumentow</li>
+                  <li>Ponad 120 par językowych</li>
+                  <li>Tłumaczenia przysięgłe i certyfikowane</li>
+                  <li>Priorytetowa obsługa zleceń pilnych</li>
+                  <li>Poufna i audytowalna obsługa dokumentów</li>
                 </>
               ) : (
                 <>
@@ -107,11 +107,11 @@ export function LandingPage() {
 
           <div className="mt-auto border border-neutral-900 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-neutral-700">
-              {locale === "pl" ? "Asystent glosowy" : "Voice Assistant"}
+              {locale === "pl" ? "Asystent głosowy" : "Voice Assistant"}
             </p>
             <p className="mt-2 text-sm leading-6 text-neutral-800">
               {locale === "pl"
-                ? "Mozesz od razu porozmawiac z naszym asystentem glosowym."
+                ? "Możesz od razu porozmawiać z naszym asystentem głosowym."
                 : "You can also speak with our voice assistant right away."}
             </p>
             <div className="mt-4">
@@ -126,12 +126,12 @@ export function LandingPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-700">{t("landing.services")}</p>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight">
             {locale === "pl"
-              ? "Dokumenty, przysiegle, ustne, lokalizacja"
+              ? "Dokumenty, przysięgłe, ustne, lokalizacja"
               : "Document, Certified, Interpretation, Localization"}
           </h2>
           <p className="mt-3 leading-7 text-neutral-800">
             {locale === "pl"
-              ? "Obslugujemy akty stanu cywilnego, umowy, dokumenty sadowe, instrukcje techniczne, strony wielojezyczne oraz komunikacje zarzadcza."
+              ? "Obsługujemy akty stanu cywilnego, umowy, dokumenty sądowe, instrukcje techniczne, strony wielojęzyczne oraz komunikację zarządczą."
               : "We support personal certificates, contracts, court filings, technical manuals, multilingual websites, and executive communications."}
           </p>
         </article>
@@ -140,8 +140,8 @@ export function LandingPage() {
           <ol className="mt-3 space-y-2 leading-7">
             {locale === "pl" ? (
               <>
-                <li>1. Przesylasz pliki i potwierdzasz wymagania.</li>
-                <li>2. Wykonujemy triage, przydzielamy tlumacza i walidujemy terminologie.</li>
+                <li>1. Przesyłasz pliki i potwierdzasz wymagania.</li>
+                <li>2. Wykonujemy triage, przydzielamy tłumacza i walidujemy terminologię.</li>
                 <li>3. Finalizujemy i dostarczamy plik w tej samej rodzinie formatu.</li>
               </>
             ) : (
@@ -159,7 +159,7 @@ export function LandingPage() {
         <h2 className="text-3xl font-semibold tracking-tight">{t("landing.contact")}</h2>
         <p className="mt-3 leading-7 text-neutral-800">
           {locale === "pl"
-            ? "W sprawie SLA dla firm oraz procesow wrazliwych prawnie skontaktuj sie z naszym zespolom operacyjnym."
+            ? "W sprawie SLA dla firm oraz procesów wrażliwych prawnie skontaktuj się z naszym zespołem operacyjnym."
             : "For enterprise SLAs or legal-sensitive workflows, contact our operations desk."}
         </p>
         <p className="mt-2 text-sm uppercase tracking-[0.16em]">operations@oto.local</p>

@@ -33,7 +33,7 @@ export function IntakeSessionPage() {
         if (!sessionId) {
           const created = await createIntakeChatSession(
             locale === "pl"
-              ? "Witamy w Open Translate Office. Pomoge Ci krok po kroku zebrac wymagania do tlumaczenia. Zaczynamy od imienia i nazwiska."
+              ? "Witamy w Open Translate Office. Pomogę Ci krok po kroku zebrać wymagania do tłumaczenia. Zaczynamy od imienia i nazwiska."
               : undefined,
             locale
           );
@@ -49,7 +49,7 @@ export function IntakeSessionPage() {
         }
       } catch (loadError) {
         if (!cancelled) {
-          setError(loadError instanceof Error ? loadError.message : locale === "pl" ? "Nie mozna uruchomic sesji." : "Unable to initialize intake session");
+          setError(loadError instanceof Error ? loadError.message : locale === "pl" ? "Nie można uruchomić sesji." : "Unable to initialize intake session");
         }
       } finally {
         if (!cancelled) {
@@ -174,7 +174,7 @@ export function IntakeSessionPage() {
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Kompletnosc" : "Completeness"}</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Kompletność" : "Completeness"}</p>
           <p className="mt-1 text-3xl font-semibold">{session?.completenessScore ?? 0}%</p>
           <div className="mt-2 h-2 w-full border border-neutral-900" aria-hidden="true">
             <div
@@ -190,14 +190,14 @@ export function IntakeSessionPage() {
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Przeslane pliki" : "Uploaded Files"}</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Przesłane pliki" : "Uploaded Files"}</p>
           <p className="mt-1 text-sm">{session?.uploadedFilesCount ?? 0}</p>
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Brakujace pola wymagane" : "Missing Required Fields"}</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Brakujące pola wymagane" : "Missing Required Fields"}</p>
           {missingLabels.length === 0 ? (
-            <p className="mt-2 text-sm">{locale === "pl" ? "Brak brakujacych wymaganych pol." : "No missing required fields."}</p>
+            <p className="mt-2 text-sm">{locale === "pl" ? "Brak brakujących wymaganych pól." : "No missing required fields."}</p>
           ) : (
             <ul className="mt-2 space-y-1 text-sm">
               {missingLabels.map((field) => (
@@ -215,9 +215,9 @@ export function IntakeSessionPage() {
 
         {session?.portalCredentials ? (
           <div className="border border-neutral-900 p-3 text-sm">
-            <p className="font-medium">{locale === "pl" ? "Dane sledzenia" : "Tracking Credentials"}</p>
-            <p>{locale === "pl" ? "Zgloszenie:" : "Request:"} {session.portalCredentials.requestNumber}</p>
-            <p>{locale === "pl" ? "Haslo:" : "Password:"} {session.portalCredentials.portalPassword}</p>
+            <p className="font-medium">{locale === "pl" ? "Dane śledzenia" : "Tracking Credentials"}</p>
+            <p>{locale === "pl" ? "Zgłoszenie:" : "Request:"} {session.portalCredentials.requestNumber}</p>
+            <p>{locale === "pl" ? "Hasło:" : "Password:"} {session.portalCredentials.portalPassword}</p>
             <Link to="/portal/login" className="mt-2 inline-block underline underline-offset-4">
               {t("intake.openPortal")}
             </Link>
@@ -227,7 +227,7 @@ export function IntakeSessionPage() {
 
       <div className="flex h-[75vh] min-h-[30rem] max-h-[46rem] flex-col overflow-hidden border border-neutral-900 lg:col-span-8">
         <div ref={messagesContainerRef} className="editorial-scrollbar flex-1 space-y-3 overflow-y-auto p-5">
-          {isLoading ? <p>{locale === "pl" ? "Ladowanie sesji..." : "Loading session..."}</p> : null}
+          {isLoading ? <p>{locale === "pl" ? "Ładowanie sesji..." : "Loading session..."}</p> : null}
           {error ? (
             <p role="alert" className="border border-accent p-3 text-sm">
               {error}
@@ -255,14 +255,14 @@ export function IntakeSessionPage() {
               name="message"
               required
               className="w-full border border-neutral-900 bg-paper px-3 py-3"
-              placeholder={locale === "pl" ? "Wpisz odpowiedz" : "Type your response"}
+              placeholder={locale === "pl" ? "Wpisz odpowiedź" : "Type your response"}
             />
             <button
               type="submit"
               disabled={isSending || isLoading || !session}
               className="border border-neutral-900 bg-ink px-5 py-3 text-xs uppercase tracking-[0.16em] text-paper disabled:opacity-60"
             >
-              {isSending ? (locale === "pl" ? "Wysylanie" : "Sending") : t("intake.send")}
+              {isSending ? (locale === "pl" ? "Wysyłanie" : "Sending") : t("intake.send")}
             </button>
           </div>
         </form>
@@ -308,22 +308,22 @@ export function IntakeSessionPage() {
             aria-labelledby="request-complete-title"
             className="w-full max-w-xl border border-neutral-900 bg-paper p-6"
           >
-            <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Zgloszenie gotowe" : "Request Ready"}</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">{locale === "pl" ? "Zgłoszenie gotowe" : "Request Ready"}</p>
             <h2 id="request-complete-title" className="mt-2 text-2xl font-semibold tracking-tight">
-              {locale === "pl" ? "Twoje zgloszenie zostalo utworzone" : "Your request was created successfully"}
+              {locale === "pl" ? "Twoje zgłoszenie zostało utworzone" : "Your request was created successfully"}
             </h2>
             <p className="mt-3 leading-7 text-neutral-800">
               {locale === "pl"
-                ? "Uzyj tych danych w portalu klienta, aby sledzic status i pobrac tlumaczenie po dostarczeniu."
+                ? "Użyj tych danych w portalu klienta, aby śledzić status i pobrać tłumaczenie po dostarczeniu."
                 : "Use these credentials in the customer portal to track status and download the translated file when it is delivered."}
             </p>
 
             <div className="mt-5 space-y-2 border border-neutral-900 p-4 text-sm">
               <p>
-                {locale === "pl" ? "Numer zgloszenia:" : "Request number:"} <span className="font-semibold">{session.portalCredentials.requestNumber}</span>
+                {locale === "pl" ? "Numer zgłoszenia:" : "Request number:"} <span className="font-semibold">{session.portalCredentials.requestNumber}</span>
               </p>
               <p>
-                {locale === "pl" ? "Haslo:" : "Password:"} <span className="font-semibold">{session.portalCredentials.portalPassword}</span>
+                {locale === "pl" ? "Hasło:" : "Password:"} <span className="font-semibold">{session.portalCredentials.portalPassword}</span>
               </p>
             </div>
 
@@ -336,7 +336,7 @@ export function IntakeSessionPage() {
                 }}
                 className="border border-neutral-900 bg-ink px-4 py-2 text-xs uppercase tracking-[0.16em] text-paper"
               >
-                {locale === "pl" ? "Utworz nowe zgloszenie" : "Create New Request"}
+                {locale === "pl" ? "Utwórz nowe zgłoszenie" : "Create New Request"}
               </button>
               <button
                 type="button"
@@ -346,7 +346,7 @@ export function IntakeSessionPage() {
                 }}
                 className="border border-neutral-900 px-4 py-2 text-xs uppercase tracking-[0.16em]"
               >
-                {locale === "pl" ? "Strona glowna" : "Main Page"}
+                {locale === "pl" ? "Strona główna" : "Main Page"}
               </button>
             </div>
           </div>
@@ -360,13 +360,13 @@ function prettyFieldLabel(value: string, locale: "en" | "pl") {
   if (locale === "pl") {
     switch (value) {
       case "fullName":
-        return "Imie i nazwisko";
+        return "Imię i nazwisko";
       case "email":
         return "Email";
       case "sourceLanguage":
-        return "Jezyk zrodlowy";
+        return "Język źródłowy";
       case "targetLanguage":
-        return "Jezyk docelowy";
+        return "Język docelowy";
       case "documentType":
         return "Typ dokumentu";
       case "fileType":
@@ -376,7 +376,7 @@ function prettyFieldLabel(value: string, locale: "en" | "pl") {
       case "urgency":
         return "Termin";
       case "files":
-        return "Przeslane pliki";
+        return "Przesłane pliki";
       default:
         return value;
     }

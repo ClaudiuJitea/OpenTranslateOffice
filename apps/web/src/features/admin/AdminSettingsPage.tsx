@@ -43,7 +43,7 @@ export function AdminSettingsPage() {
         loadError instanceof Error
           ? loadError.message
           : locale === "pl"
-            ? "Nie mozna zaladowac danych administracyjnych."
+            ? "Nie można załadować danych administracyjnych."
             : "Failed to load admin data"
       );
     }
@@ -75,7 +75,7 @@ export function AdminSettingsPage() {
       setSettings(updated);
       setNotice(
         locale === "pl"
-          ? "Ustawienia integracji zostaly zapisane."
+          ? "Ustawienia integracji zostały zapisane."
           : "Integration settings saved."
       );
     } catch (saveError) {
@@ -83,7 +83,7 @@ export function AdminSettingsPage() {
         saveError instanceof Error
           ? saveError.message
           : locale === "pl"
-            ? "Nie mozna zapisac ustawien integracji."
+            ? "Nie można zapisać ustawień integracji."
             : "Failed to save integration settings"
       );
     } finally {
@@ -114,7 +114,7 @@ export function AdminSettingsPage() {
         saveError instanceof Error
           ? saveError.message
           : locale === "pl"
-            ? "Nie mozna utworzyc uzytkownika."
+            ? "Nie można utworzyć użytkownika."
             : "Failed to create user"
       );
     } finally {
@@ -134,7 +134,7 @@ export function AdminSettingsPage() {
         saveError instanceof Error
           ? saveError.message
           : locale === "pl"
-            ? "Nie mozna zaktualizowac statusu uzytkownika."
+            ? "Nie można zaktualizować statusu użytkownika."
             : "Unable to update user status"
       );
     } finally {
@@ -154,7 +154,7 @@ export function AdminSettingsPage() {
         saveError instanceof Error
           ? saveError.message
           : locale === "pl"
-            ? "Nie mozna zaktualizowac roli uzytkownika."
+            ? "Nie można zaktualizować roli użytkownika."
             : "Unable to update user role"
       );
     } finally {
@@ -167,7 +167,7 @@ export function AdminSettingsPage() {
     if (resetPassword.trim().length < 8) {
       setError(
         locale === "pl"
-          ? "Nowe haslo musi miec co najmniej 8 znakow."
+          ? "Nowe hasło musi mieć co najmniej 8 znaków."
           : "Reset password must be at least 8 characters"
       );
       return;
@@ -176,7 +176,7 @@ export function AdminSettingsPage() {
     if (resetPassword !== resetPasswordConfirm) {
       setError(
         locale === "pl"
-          ? "Wprowadzone hasla musza byc identyczne."
+          ? "Wprowadzone hasła muszą być identyczne."
           : "The password entries must match"
       );
       return;
@@ -195,7 +195,7 @@ export function AdminSettingsPage() {
         saveError instanceof Error
           ? saveError.message
           : locale === "pl"
-            ? "Nie mozna zresetowac hasla."
+            ? "Nie można zresetować hasła."
             : "Failed to reset password"
       );
     } finally {
@@ -217,7 +217,7 @@ export function AdminSettingsPage() {
         saveError instanceof Error
           ? saveError.message
           : locale === "pl"
-            ? "Nie mozna usunac uzytkownika."
+            ? "Nie można usunąć użytkownika."
             : "Unable to delete user"
       );
     } finally {
@@ -236,7 +236,7 @@ export function AdminSettingsPage() {
         </h1>
         <p className="max-w-3xl leading-7 text-neutral-800">
           {locale === "pl"
-            ? "Zarzadzaj kontami tlumaczy i integracjami uslug zewnetrznych."
+            ? "Zarządzaj kontami tłumaczy i integracjami usług zewnętrznych."
             : "Manage translator accounts and external service integrations."}
         </p>
       </header>
@@ -256,26 +256,26 @@ export function AdminSettingsPage() {
       <section className="space-y-5 border border-neutral-900 p-5">
         <header className="space-y-1 border-b border-neutral-900 pb-3">
           <p className="text-xs uppercase tracking-[0.18em] text-neutral-700">
-            {locale === "pl" ? "Administracja tlumaczy" : "Translator Administration"}
+            {locale === "pl" ? "Administracja tłumaczy" : "Translator Administration"}
           </p>
           <h2 className="text-2xl font-semibold tracking-tight">
-            {locale === "pl" ? "Uzytkownicy i role" : "Users & Roles"}
+            {locale === "pl" ? "Użytkownicy i role" : "Users & Roles"}
           </h2>
         </header>
 
         <form className="grid items-end gap-4 md:grid-cols-4" onSubmit={onCreateUser}>
-          <Field label={locale === "pl" ? "Imie i nazwisko" : "Full Name"} name="fullName" required />
+          <Field label={locale === "pl" ? "Imię i nazwisko" : "Full Name"} name="fullName" required />
           <Field label="Email" name="email" type="email" required />
           <SelectField
             label={locale === "pl" ? "Rola" : "Role"}
             name="role"
             options={[
-              { value: "EMPLOYEE", label: locale === "pl" ? "Tlumacz (Pracownik)" : "Translator (Employee)" },
+              { value: "EMPLOYEE", label: locale === "pl" ? "Tłumacz (Pracownik)" : "Translator (Employee)" },
               { value: "ADMIN", label: "Admin" }
             ]}
           />
           <Field
-            label={locale === "pl" ? "Haslo poczatkowe" : "Initial Password"}
+            label={locale === "pl" ? "Hasło początkowe" : "Initial Password"}
             name="password"
             type="password"
             placeholder={locale === "pl" ? "Opcjonalne" : "Optional"}
@@ -291,7 +291,7 @@ export function AdminSettingsPage() {
                   ? "Zapisywanie"
                   : "Saving"
                 : locale === "pl"
-                  ? "Utworz uzytkownika"
+                  ? "Utwórz użytkownika"
                   : "Create User"}
             </button>
           </div>
@@ -356,7 +356,7 @@ export function AdminSettingsPage() {
                         }}
                         className="underline underline-offset-4"
                       >
-                        {locale === "pl" ? "Resetuj haslo" : "Reset Password"}
+                        {locale === "pl" ? "Resetuj hasło" : "Reset Password"}
                       </button>
                       <button
                         type="button"
@@ -382,11 +382,11 @@ export function AdminSettingsPage() {
             {locale === "pl" ? "Plan pracy" : "Work Calendar"}
           </p>
           <h2 className="text-2xl font-semibold tracking-tight">
-            {locale === "pl" ? "Kalendarz zespolu" : "Team Work Calendar"}
+            {locale === "pl" ? "Kalendarz zespołu" : "Team Work Calendar"}
           </h2>
           <p className="max-w-3xl text-sm leading-6 text-neutral-800">
             {locale === "pl"
-              ? "Otworz osobna strone kalendarza, aby przegladac przypisane zlecenia i dzienny harmonogram pracy dla wybranego uzytkownika."
+              ? "Otwórz osobną stronę kalendarza, aby przeglądać przypisane zlecenia i dzienny harmonogram pracy dla wybranego użytkownika."
               : "Open the dedicated calendar page to review assigned jobs and daily working hours for a selected user."}
           </p>
         </header>
@@ -397,7 +397,7 @@ export function AdminSettingsPage() {
             </p>
             <p className="text-sm text-neutral-700">
               {locale === "pl"
-                ? "Przejdz do dedykowanej strony, aby przegladac harmonogram bez przeciazenia ustawien administracyjnych."
+                ? "Przejdź do dedykowanej strony, aby przeglądać harmonogram bez przeciążenia ustawień administracyjnych."
                 : "Use the dedicated page for scheduling without crowding the admin settings screen."}
             </p>
           </div>
@@ -405,7 +405,7 @@ export function AdminSettingsPage() {
             to="/admin/calendar"
             className="border border-neutral-900 bg-ink px-5 py-3 text-xs uppercase tracking-[0.16em] text-paper"
           >
-            {locale === "pl" ? "Otworz kalendarz" : "Open Calendar"}
+            {locale === "pl" ? "Otwórz kalendarz" : "Open Calendar"}
           </Link>
         </div>
       </section>
@@ -414,7 +414,7 @@ export function AdminSettingsPage() {
         <form className="space-y-8" onSubmit={onSubmitIntegrations}>
           <section className="space-y-5 border border-neutral-900 p-5">
             <header className="space-y-1 border-b border-neutral-900 pb-3">
-              <p className="text-xs uppercase tracking-[0.18em] text-neutral-700">{locale === "pl" ? "Zewnetrzny LLM" : "External LLM"}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-neutral-700">{locale === "pl" ? "Zewnętrzny LLM" : "External LLM"}</p>
               <h2 className="text-2xl font-semibold tracking-tight">OpenRouter</h2>
             </header>
             <div className="grid gap-6 md:grid-cols-2">
@@ -426,7 +426,7 @@ export function AdminSettingsPage() {
 
           <section className="space-y-5 border border-neutral-900 p-5">
             <header className="space-y-1 border-b border-neutral-900 pb-3">
-              <p className="text-xs uppercase tracking-[0.18em] text-neutral-700">{locale === "pl" ? "Dostawca glosu" : "Voice Provider"}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-neutral-700">{locale === "pl" ? "Dostawca głosu" : "Voice Provider"}</p>
               <h2 className="text-2xl font-semibold tracking-tight">ElevenLabs</h2>
             </header>
             <div className="grid gap-6 md:grid-cols-2">
@@ -453,7 +453,7 @@ export function AdminSettingsPage() {
           </div>
         </form>
       ) : (
-        <p>{locale === "pl" ? "Ladowanie ustawien..." : "Loading settings..."}</p>
+        <p>{locale === "pl" ? "Ładowanie ustawień..." : "Loading settings..."}</p>
       )}
 
       {resetTarget ? (
@@ -465,15 +465,15 @@ export function AdminSettingsPage() {
         >
           <div className="w-full max-w-md space-y-4 border border-neutral-900 bg-paper p-5">
             <h3 id="reset-password-title" className="text-xl font-semibold tracking-tight">
-              {locale === "pl" ? "Reset hasla" : "Reset Password"}
+              {locale === "pl" ? "Reset hasła" : "Reset Password"}
             </h3>
             <p className="text-sm leading-6">
-              {locale === "pl" ? "Ustaw nowe haslo dla " : "Set a new password for "}
+              {locale === "pl" ? "Ustaw nowe hasło dla " : "Set a new password for "}
               <span className="font-medium">{resetTarget.fullName}</span>.
             </p>
             <div className="space-y-2">
               <label htmlFor="resetPassword" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                {locale === "pl" ? "Nowe haslo" : "New Password"}
+                {locale === "pl" ? "Nowe hasło" : "New Password"}
               </label>
               <input
                 id="resetPassword"
@@ -487,7 +487,7 @@ export function AdminSettingsPage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="resetPasswordConfirm" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                {locale === "pl" ? "Potwierdz haslo" : "Confirm Password"}
+                {locale === "pl" ? "Potwierdź hasło" : "Confirm Password"}
               </label>
               <input
                 id="resetPasswordConfirm"
@@ -541,16 +541,16 @@ export function AdminSettingsPage() {
         >
           <div className="w-full max-w-md space-y-4 border border-neutral-900 bg-paper p-5">
             <h3 id="delete-user-title" className="text-xl font-semibold tracking-tight">
-              {locale === "pl" ? "Usuniecie uzytkownika" : "Delete User Account"}
+              {locale === "pl" ? "Usunięcie użytkownika" : "Delete User Account"}
             </h3>
             <p className="text-sm leading-6">
               {locale === "pl"
-                ? "Ta operacja jest nieodwracalna. Przed usunieciem konta nalezy najpierw dezaktywowac uzytkownika."
+                ? "Ta operacja jest nieodwracalna. Przed usunięciem konta należy najpierw dezaktywować użytkownika."
                 : "This action is permanent. The user account must be deactivated before it can be deleted."}
             </p>
             <div className="border border-neutral-300 px-3 py-3 text-sm leading-6">
               <p>
-                <span className="font-medium">{locale === "pl" ? "Uzytkownik:" : "User:"}</span>{" "}
+                <span className="font-medium">{locale === "pl" ? "Użytkownik:" : "User:"}</span>{" "}
                 {deleteTarget.fullName}
               </p>
               <p>
@@ -570,7 +570,7 @@ export function AdminSettingsPage() {
             {deleteTarget.isActive ? (
               <p className="border border-accent p-3 text-sm leading-6 text-accent">
                 {locale === "pl"
-                  ? "Przed usunieciem konta najpierw dezaktywuj tego uzytkownika na liscie uzytkownikow. Aktywne konta nie moga zostac usuniete."
+                  ? "Przed usunięciem konta najpierw dezaktywuj tego użytkownika na liście użytkowników. Aktywne konta nie mogą zostać usunięte."
                   : "Please deactivate this user from the users list before proceeding. Active accounts cannot be deleted."}
               </p>
             ) : null}
@@ -588,7 +588,7 @@ export function AdminSettingsPage() {
                     ? "Zapisywanie"
                     : "Saving"
                   : locale === "pl"
-                    ? "Usun konto"
+                    ? "Usuń konto"
                     : "Delete Account"}
               </button>
               <button

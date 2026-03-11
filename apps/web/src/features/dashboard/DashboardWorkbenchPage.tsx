@@ -121,7 +121,7 @@ export function DashboardWorkbenchPage() {
         loadError instanceof Error
           ? loadError.message
           : locale === "pl"
-            ? "Nie mozna zaladowac przypisanych zadan."
+            ? "Nie można załadować przypisanych zadań."
             : "Unable to load assigned jobs"
       );
     } finally {
@@ -145,7 +145,7 @@ export function DashboardWorkbenchPage() {
         loadError instanceof Error
           ? loadError.message
           : locale === "pl"
-            ? "Nie mozna zaladowac szczegolow zlecenia."
+            ? "Nie można załadować szczegółów zlecenia."
             : "Unable to load job detail"
       );
     }
@@ -212,7 +212,7 @@ export function DashboardWorkbenchPage() {
       await refreshJobs();
       await refreshDetail(selectedJobId);
     } catch (actionError) {
-      setError(actionError instanceof Error ? actionError.message : locale === "pl" ? "Nie mozna przypisac zlecenia." : "Unable to assign job");
+      setError(actionError instanceof Error ? actionError.message : locale === "pl" ? "Nie można przypisać zlecenia." : "Unable to assign job");
     }
   }
 
@@ -225,7 +225,7 @@ export function DashboardWorkbenchPage() {
       await refreshJobs();
       await refreshDetail(selectedJobId);
     } catch (actionError) {
-      setError(actionError instanceof Error ? actionError.message : locale === "pl" ? "Nie mozna odrzucic zlecenia." : "Unable to refuse job");
+      setError(actionError instanceof Error ? actionError.message : locale === "pl" ? "Nie można odrzucić zlecenia." : "Unable to refuse job");
     }
   }
 
@@ -246,7 +246,7 @@ export function DashboardWorkbenchPage() {
         await refreshJobs();
         return;
       }
-      setError(actionError instanceof Error ? actionError.message : locale === "pl" ? "Nie mozna usunac zlecenia." : "Unable to delete job");
+      setError(actionError instanceof Error ? actionError.message : locale === "pl" ? "Nie można usunąć zlecenia." : "Unable to delete job");
     }
   }
 
@@ -327,7 +327,7 @@ export function DashboardWorkbenchPage() {
         actionError instanceof Error
           ? actionError.message
           : locale === "pl"
-            ? "Nie udalo sie przetlumaczyc dokumentu przez AI."
+            ? "Nie udało się przetłumaczyć dokumentu przez AI."
             : "Unable to translate document with AI"
       );
     } finally {
@@ -348,7 +348,7 @@ export function DashboardWorkbenchPage() {
         actionError instanceof Error
           ? actionError.message
           : locale === "pl"
-            ? "Nie udalo sie przekazac tlumaczenia klientowi."
+            ? "Nie udało się przekazać tłumaczenia klientowi."
             : "Unable to send translation to customer"
       );
     } finally {
@@ -363,11 +363,11 @@ export function DashboardWorkbenchPage() {
           {locale === "pl" ? "Panel pracownika" : "Employee Dashboard"}
         </p>
         <h1 className="text-4xl font-semibold tracking-tight">
-          {locale === "pl" ? "Stanowisko tlumaczen" : "Translation Workbench"}
+          {locale === "pl" ? "Stanowisko tłumaczeń" : "Translation Workbench"}
         </h1>
         <p className="max-w-3xl leading-7 text-neutral-800">
           {locale === "pl"
-            ? "Przegladaj przypisane zlecenia, aktualizuj status, uruchamiaj narzedzia AI i zapisuj notatki audytowe."
+            ? "Przeglądaj przypisane zlecenia, aktualizuj status, uruchamiaj narzędzia AI i zapisuj notatki audytowe."
             : "Review assigned jobs, update status, run AI helper actions, and keep auditable notes."}
         </p>
       </header>
@@ -399,10 +399,10 @@ export function DashboardWorkbenchPage() {
 
           <div className="border border-neutral-900 p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-              {locale === "pl" ? "Termin wkrotce (24h)" : "Due Soon (24h)"}
+              {locale === "pl" ? "Termin wkrótce (24h)" : "Due Soon (24h)"}
             </p>
             {dueSoon.length === 0 ? (
-              <p className="mt-2 text-sm">{locale === "pl" ? "Brak alertow terminowych." : "No due-soon alerts."}</p>
+              <p className="mt-2 text-sm">{locale === "pl" ? "Brak alertów terminowych." : "No due-soon alerts."}</p>
             ) : (
               <ul className="mt-2 space-y-2 text-sm">
                 {dueSoon.map((job) => (
@@ -419,11 +419,11 @@ export function DashboardWorkbenchPage() {
             <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">
               {locale === "pl" ? "Przypisane zlecenia" : "Assigned Jobs"}
             </p>
-            {isLoading ? <p className="mt-2 text-sm">{locale === "pl" ? "Ladowanie zadan..." : "Loading jobs..."}</p> : null}
+            {isLoading ? <p className="mt-2 text-sm">{locale === "pl" ? "Ładowanie zadań..." : "Loading jobs..."}</p> : null}
             <div className="editorial-scrollbar mt-3 flex-1 space-y-2 overflow-auto pr-1">
               {jobs.length === 0 ? (
                 <p className="text-sm text-neutral-700">
-                  {locale === "pl" ? "Brak przypisanych zlecen." : "No assigned jobs."}
+                  {locale === "pl" ? "Brak przypisanych zleceń." : "No assigned jobs."}
                 </p>
               ) : (
                 jobs.map((job) => (
@@ -486,7 +486,7 @@ export function DashboardWorkbenchPage() {
                   </div>
                   <div className="border border-neutral-300 px-3 py-2">
                     <dt className="text-xs uppercase tracking-[0.14em] text-neutral-700">
-                      {locale === "pl" ? "Para jezykowa" : "Language Pair"}
+                      {locale === "pl" ? "Para językowa" : "Language Pair"}
                     </dt>
                     <dd className="mt-1 font-medium">
                       {localizeLanguage(detail.job.sourceLang, locale)} {"->"} {localizeLanguage(detail.job.targetLang, locale)}
@@ -506,7 +506,7 @@ export function DashboardWorkbenchPage() {
                       htmlFor="statusChange"
                       className="min-w-[7.5rem] text-xs uppercase tracking-[0.16em] text-neutral-700"
                     >
-                      {locale === "pl" ? "Zmien status" : "Move status"}
+                      {locale === "pl" ? "Zmień status" : "Move status"}
                     </label>
                     <select
                       id="statusChange"
@@ -527,10 +527,10 @@ export function DashboardWorkbenchPage() {
                   <div className="mt-6 border-t border-neutral-300 pt-5">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                       <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                        {locale === "pl" ? "Zarzadzanie zleceniem" : "Job Management"}
+                        {locale === "pl" ? "Zarządzanie zleceniem" : "Job Management"}
                       </p>
                       <p className="text-xs text-neutral-700">
-                        {locale === "pl" ? "Aktywny przydzial: " : "Active assignment: "}
+                        {locale === "pl" ? "Aktywny przydział: " : "Active assignment: "}
                         <span className="font-medium text-ink">
                           {detail.activeAssignments?.[0]?.fullName ?? (locale === "pl" ? "nieprzypisane" : "unassigned")}
                         </span>
@@ -540,7 +540,7 @@ export function DashboardWorkbenchPage() {
                     <div className="grid gap-3 md:grid-cols-12">
                       <div className="md:col-span-5">
                         <label htmlFor="assignee" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                          {locale === "pl" ? "Przypisz tlumacza" : "Assign translator"}
+                          {locale === "pl" ? "Przypisz tłumacza" : "Assign translator"}
                         </label>
                         <select
                           id="assignee"
@@ -548,7 +548,7 @@ export function DashboardWorkbenchPage() {
                           onChange={(event) => setSelectedAssigneeId(event.target.value)}
                           className="mt-1 h-10 w-full border border-neutral-900 bg-paper px-3"
                         >
-                          <option value="">{locale === "pl" ? "Wybierz osobe" : "Select person"}</option>
+                          <option value="">{locale === "pl" ? "Wybierz osobę" : "Select person"}</option>
                           {assignableUsers.map((person) => (
                             <option key={person.id} value={person.id}>
                               {person.fullName} ({person.role})
@@ -574,7 +574,7 @@ export function DashboardWorkbenchPage() {
                           }}
                           className="h-10 border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em]"
                         >
-                          {locale === "pl" ? "Odrzuc zlecenie" : "Refuse Job"}
+                          {locale === "pl" ? "Odrzuć zlecenie" : "Refuse Job"}
                         </button>
                       </div>
 
@@ -586,7 +586,7 @@ export function DashboardWorkbenchPage() {
                           }}
                           className="h-10 border border-accent px-4 text-xs uppercase tracking-[0.16em] text-accent"
                         >
-                          {locale === "pl" ? "Usun zlecenie" : "Delete Job"}
+                          {locale === "pl" ? "Usuń zlecenie" : "Delete Job"}
                         </button>
                       </div>
                     </div>
@@ -598,7 +598,7 @@ export function DashboardWorkbenchPage() {
                 <h3 className="text-lg font-semibold">{locale === "pl" ? "Dostawa / Eksport" : "Delivery / Export"}</h3>
                 <p className="mt-2 text-sm text-neutral-700">
                   {locale === "pl"
-                    ? "Przeslij finalne pliki tlumaczenia. Portal klienta umozliwi pobranie po dostarczeniu."
+                    ? "Prześlij finalne pliki tłumaczenia. Portal klienta umożliwi pobranie po dostarczeniu."
                     : "Upload finalized translated files. Customer portal can download once available."}
                 </p>
                 <form className="mt-3 flex items-end gap-3" onSubmit={onUploadDeliverable}>
@@ -618,12 +618,12 @@ export function DashboardWorkbenchPage() {
                     type="submit"
                     className="border border-neutral-900 bg-ink px-4 py-2 text-xs uppercase tracking-[0.16em] text-paper"
                   >
-                    {locale === "pl" ? "Przeslij" : "Upload"}
+                    {locale === "pl" ? "Prześlij" : "Upload"}
                   </button>
                 </form>
                 <ul className="mt-4 space-y-2 text-sm">
                   {detail.deliverables.length === 0 ? (
-                    <li>{locale === "pl" ? "Brak przeslanych plikow finalnych." : "No deliverables uploaded yet."}</li>
+                    <li>{locale === "pl" ? "Brak przesłanych plików finalnych." : "No deliverables uploaded yet."}</li>
                   ) : (
                     detail.deliverables.map((file) => (
                       <li key={file.id} className="border-b border-neutral-200 pb-2">
@@ -636,10 +636,10 @@ export function DashboardWorkbenchPage() {
               </section>
 
               <section className="border border-neutral-900 p-4">
-                <h3 className="text-lg font-semibold">{locale === "pl" ? "Notatki wewnetrzne" : "Internal Notes"}</h3>
+                <h3 className="text-lg font-semibold">{locale === "pl" ? "Notatki wewnętrzne" : "Internal Notes"}</h3>
                 <form className="mt-3 space-y-2" onSubmit={onSubmitNote}>
                   <label htmlFor="noteContent" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                    {locale === "pl" ? "Dodaj notatke" : "Add note"}
+                    {locale === "pl" ? "Dodaj notatkę" : "Add note"}
                   </label>
                   <textarea
                     id="noteContent"
@@ -652,7 +652,7 @@ export function DashboardWorkbenchPage() {
                     type="submit"
                     className="border border-neutral-900 bg-ink px-4 py-2 text-xs uppercase tracking-[0.16em] text-paper"
                   >
-                    {locale === "pl" ? "Zapisz notatke" : "Save Note"}
+                    {locale === "pl" ? "Zapisz notatkę" : "Save Note"}
                   </button>
                 </form>
                 <ul className="mt-4 space-y-2 text-sm">
@@ -670,7 +670,7 @@ export function DashboardWorkbenchPage() {
             })()
           ) : (
             <section className="border border-neutral-900 p-6">
-              <p>{locale === "pl" ? "Wybierz zlecenie z kolejki, aby otworzyc stanowisko pracy." : "Select a job from the assigned queue to open the workbench."}</p>
+              <p>{locale === "pl" ? "Wybierz zlecenie z kolejki, aby otworzyć stanowisko pracy." : "Select a job from the assigned queue to open the workbench."}</p>
             </section>
           )}
         </div>
@@ -686,11 +686,11 @@ export function DashboardWorkbenchPage() {
           return (
             <section className="border border-neutral-900 p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <h3 className="text-lg font-semibold">{locale === "pl" ? "Podglad dokumentu zrodlowego" : "Source Document Viewer"}</h3>
+                <h3 className="text-lg font-semibold">{locale === "pl" ? "Podgląd dokumentu źródłowego" : "Source Document Viewer"}</h3>
                 {sourceDocuments.length > 0 ? (
                   <div className="min-w-[20rem] space-y-1">
                     <label htmlFor="sourceDocSelect" className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                      {locale === "pl" ? "Dokument zrodlowy" : "Source document"}
+                      {locale === "pl" ? "Dokument źródłowy" : "Source document"}
                     </label>
                     <div className="flex items-center gap-2">
                       <select
@@ -717,7 +717,7 @@ export function DashboardWorkbenchPage() {
               {sourceDocuments.length === 0 ? (
                 <p className="mt-2 text-sm text-neutral-700">
                   {locale === "pl"
-                    ? "Brak dokumentow zrodlowych przypisanych do tego zlecenia."
+                    ? "Brak dokumentów źródłowych przypisanych do tego zlecenia."
                     : "No source documents are attached to this job."}
                 </p>
               ) : (
@@ -725,7 +725,7 @@ export function DashboardWorkbenchPage() {
                   {selectedDoc ? (
                     <>
                       <iframe
-                        title={locale === "pl" ? "Podglad dokumentu zrodlowego" : "Source document preview"}
+                        title={locale === "pl" ? "Podgląd dokumentu źródłowego" : "Source document preview"}
                         src={sourceDocumentViewUrl(detail.job.id, selectedDoc.id)}
                         className="h-[98vh] min-h-[72rem] w-full border border-neutral-900 bg-paper"
                       />
@@ -733,16 +733,16 @@ export function DashboardWorkbenchPage() {
                         href={sourceDocumentDownloadUrl(detail.job.id, selectedDoc.id)}
                         className="inline-block underline underline-offset-4 text-sm"
                       >
-                        {locale === "pl" ? "Pobierz dokument zrodlowy" : "Download source document"}
+                        {locale === "pl" ? "Pobierz dokument źródłowy" : "Download source document"}
                       </a>
 
                       <div className="border border-neutral-900 p-3">
                         <p className="text-xs uppercase tracking-[0.16em] text-neutral-700">
-                          {locale === "pl" ? "AI tlumaczenie dokumentu" : "AI Document Translation"}
+                          {locale === "pl" ? "AI tłumaczenie dokumentu" : "AI Document Translation"}
                         </p>
                         <p className="mt-2 text-sm text-neutral-700">
                           {locale === "pl"
-                            ? "Przetlumacz wybrany plik z zachowaniem rodziny formatu. Po sprawdzeniu mozesz wyslac plik bezposrednio do portalu klienta."
+                            ? "Przetłumacz wybrany plik z zachowaniem rodziny formatu. Po sprawdzeniu możesz wysłać plik bezpośrednio do portalu klienta."
                             : "Translate selected file and keep output in the same file family. After review, you can send it directly to customer portal."}
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -756,10 +756,10 @@ export function DashboardWorkbenchPage() {
                           >
                             {isAiTranslating
                               ? locale === "pl"
-                                ? "Tlumaczenie..."
+                                ? "Tłumaczenie..."
                                 : "Translating..."
                               : locale === "pl"
-                                ? "Przetlumacz przez AI"
+                                ? "Przetłumacz przez AI"
                                 : "Translate with AI"}
                           </button>
 
@@ -769,7 +769,7 @@ export function DashboardWorkbenchPage() {
                                 href={aiTranslationDownloadUrl(detail.job.id, selectedDocTranslationRun.runId)}
                                 className="inline-flex h-10 items-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em] underline underline-offset-4"
                               >
-                                {locale === "pl" ? "Pobierz tlumaczenie" : "Download translation"}
+                                {locale === "pl" ? "Pobierz tłumaczenie" : "Download translation"}
                               </a>
                               {selectedDocTranslationRun.supportedConversions.length > 0 ? (
                                 <>
@@ -792,7 +792,7 @@ export function DashboardWorkbenchPage() {
                                     )}
                                     className="inline-flex h-10 items-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em] underline underline-offset-4"
                                   >
-                                    {locale === "pl" ? "Pobierz konwersje" : "Download conversion"}
+                                    {locale === "pl" ? "Pobierz konwersję" : "Download conversion"}
                                   </a>
                                 </>
                               ) : null}
@@ -812,7 +812,7 @@ export function DashboardWorkbenchPage() {
                               }}
                               className="h-10 border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em] disabled:opacity-50"
                             >
-                              {locale === "pl" ? "Wyslij do klienta" : "Send to customer"}
+                              {locale === "pl" ? "Wyślij do klienta" : "Send to customer"}
                             </button>
                           ) : null}
                         </div>
@@ -820,24 +820,24 @@ export function DashboardWorkbenchPage() {
                           {selectedDocTranslationRun
                             ? selectedDocTranslationRun.publishedDeliverableId
                               ? locale === "pl"
-                                ? "Status: wyslane do klienta i dostepne w portalu."
+                                ? "Status: wysłane do klienta i dostępne w portalu."
                                 : "Status: sent to customer and available in portal."
                               : selectedDocTranslationRun.status === "FAILED"
                                 ? locale === "pl"
-                                  ? "Status: tlumaczenie nieudane."
+                                  ? "Status: tłumaczenie nieudane."
                                   : "Status: translation failed."
                                 : locale === "pl"
-                                  ? "Status: tlumaczenie gotowe do pobrania lub wysylki."
+                                  ? "Status: tłumaczenie gotowe do pobrania lub wysyłki."
                                   : "Status: translation ready for download or delivery."
                             : locale === "pl"
-                              ? "Brak tlumaczenia AI dla tego dokumentu."
+                              ? "Brak tłumaczenia AI dla tego dokumentu."
                               : "No AI translation generated for this document yet."}
                         </p>
                       </div>
                     </>
                   ) : (
                     <p className="text-sm text-neutral-700">
-                      {locale === "pl" ? "Wybierz dokument, aby zobaczyc podglad." : "Select a document to preview."}
+                      {locale === "pl" ? "Wybierz dokument, aby zobaczyć podgląd." : "Select a document to preview."}
                     </p>
                   )}
                 </div>
@@ -857,11 +857,11 @@ export function DashboardWorkbenchPage() {
             {actionModal === "assign" ? (
               <>
                 <h3 className="text-xl font-semibold tracking-tight">
-                  {locale === "pl" ? "Potwierdz przypisanie" : "Confirm Assignment"}
+                  {locale === "pl" ? "Potwierdź przypisanie" : "Confirm Assignment"}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-neutral-800">
                   {locale === "pl"
-                    ? `Czy przypisac to zlecenie do: ${selectedAssignee?.fullName ?? "-"}?`
+                    ? `Czy przypisać to zlecenie do: ${selectedAssignee?.fullName ?? "-"}?`
                     : `Assign this job to: ${selectedAssignee?.fullName ?? "-"}?`}
                 </p>
                 <div className="mt-5 flex gap-3">
@@ -872,7 +872,7 @@ export function DashboardWorkbenchPage() {
                     }}
                     className="h-10 border border-neutral-900 bg-ink px-4 text-xs uppercase tracking-[0.16em] text-paper"
                   >
-                    {locale === "pl" ? "Potwierdz" : "Confirm"}
+                    {locale === "pl" ? "Potwierdź" : "Confirm"}
                   </button>
                   <button
                     type="button"
@@ -892,11 +892,11 @@ export function DashboardWorkbenchPage() {
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-neutral-800">
                   {locale === "pl"
-                    ? "Opcjonalnie podaj powod odrzucenia. Status zostanie zmieniony na Odrzucone."
+                    ? "Opcjonalnie podaj powód odrzucenia. Status zostanie zmieniony na Odrzucone."
                     : "Optionally provide a reason. The status will be changed to Refused."}
                 </p>
                 <label htmlFor="refuseReason" className="mt-4 block text-xs uppercase tracking-[0.16em] text-neutral-700">
-                  {locale === "pl" ? "Powod (opcjonalnie)" : "Reason (optional)"}
+                  {locale === "pl" ? "Powód (opcjonalnie)" : "Reason (optional)"}
                 </label>
                 <textarea
                   id="refuseReason"
@@ -913,7 +913,7 @@ export function DashboardWorkbenchPage() {
                     }}
                     className="h-10 border border-neutral-900 bg-ink px-4 text-xs uppercase tracking-[0.16em] text-paper"
                   >
-                    {locale === "pl" ? "Potwierdz odrzucenie" : "Confirm Refusal"}
+                    {locale === "pl" ? "Potwierdź odrzucenie" : "Confirm Refusal"}
                   </button>
                   <button
                     type="button"
@@ -929,11 +929,11 @@ export function DashboardWorkbenchPage() {
             {actionModal === "delete" ? (
               <>
                 <h3 className="text-xl font-semibold tracking-tight">
-                  {locale === "pl" ? "Usun zlecenie" : "Delete Job"}
+                  {locale === "pl" ? "Usuń zlecenie" : "Delete Job"}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-neutral-800">
                   {locale === "pl"
-                    ? "Czy na pewno usunac to zlecenie? Tej operacji nie mozna cofnac."
+                    ? "Czy na pewno usunąć to zlecenie? Tej operacji nie można cofnąć."
                     : "Are you sure you want to delete this job? This action cannot be undone."}
                 </p>
                 <div className="mt-5 flex gap-3">
@@ -944,7 +944,7 @@ export function DashboardWorkbenchPage() {
                     }}
                     className="h-10 border border-accent bg-paper px-4 text-xs uppercase tracking-[0.16em] text-accent"
                   >
-                    {locale === "pl" ? "Tak, usun" : "Yes, delete"}
+                    {locale === "pl" ? "Tak, usuń" : "Yes, delete"}
                   </button>
                   <button
                     type="button"
@@ -998,7 +998,7 @@ function localizePriority(priority: string, locale: "en" | "pl") {
   if (locale !== "pl") return priority;
   const map: Record<string, string> = {
     LOW: "Niski",
-    MEDIUM: "Sredni",
+    MEDIUM: "Średni",
     HIGH: "Wysoki",
     URGENT: "Pilny"
   };
@@ -1012,13 +1012,13 @@ function localizeLanguage(language: string, locale: "en" | "pl") {
     polish: "polski",
     german: "niemiecki",
     french: "francuski",
-    spanish: "hiszpanski",
-    italian: "wloski",
+    spanish: "hiszpański",
+    italian: "włoski",
     portuguese: "portugalski",
     dutch: "holenderski",
     arabic: "arabski",
-    japanese: "japonski",
-    chinese: "chinski"
+    japanese: "japoński",
+    chinese: "chiński"
   };
   const key = language.trim().toLowerCase();
   return map[key] ?? language;
@@ -1026,5 +1026,5 @@ function localizeLanguage(language: string, locale: "en" | "pl") {
 
 function localizeJobTitle(title: string, locale: "en" | "pl") {
   if (locale !== "pl") return title;
-  return title.replace(/\s+translation$/i, " tlumaczenie");
+  return title.replace(/\s+translation$/i, " tłumaczenie");
 }

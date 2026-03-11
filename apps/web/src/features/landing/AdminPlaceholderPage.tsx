@@ -11,7 +11,7 @@ export function AdminPlaceholderPage() {
       </h1>
       <p className="max-w-3xl leading-7 text-neutral-800">
         {locale === "pl"
-          ? "Kontrola przydzialow, rozkladu obciazenia i kompletnosci zgloszen jest planowana w Fazie 8."
+          ? "Kontrola przydziałów, rozkładu obciążenia i kompletności zgłoszeń jest planowana w Fazie 8."
           : "Assignment controls, workload distribution, and intake completeness views are planned in Phase 8."}
       </p>
     </section>

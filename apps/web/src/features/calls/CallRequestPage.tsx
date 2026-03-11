@@ -26,13 +26,13 @@ export function CallRequestPage() {
     const requestedCallAtRaw = String(form.get("requestedCallAt") ?? "").trim();
 
     if (!fullName) {
-      setError(locale === "pl" ? "Imie i nazwisko jest wymagane." : "Full name is required.");
+      setError(locale === "pl" ? "Imię i nazwisko jest wymagane." : "Full name is required.");
       setState("error");
       return;
     }
 
     if (phone.length < 5) {
-      setError(locale === "pl" ? "Numer telefonu jest za krotki." : "Phone number is too short.");
+      setError(locale === "pl" ? "Numer telefonu jest za krótki." : "Phone number is too short.");
       setState("error");
       return;
     }
@@ -40,7 +40,7 @@ export function CallRequestPage() {
     if (projectSummary.length < 10) {
       setError(
         locale === "pl"
-          ? "Opis projektu musi miec co najmniej 10 znakow."
+          ? "Opis projektu musi mieć co najmniej 10 znaków."
           : "Project summary must be at least 10 characters."
       );
       setState("error");
@@ -50,7 +50,7 @@ export function CallRequestPage() {
     if (!Number.isInteger(declaredPageCount) || declaredPageCount <= 0) {
       setError(
         locale === "pl"
-          ? "Liczba stron musi byc dodatnia liczba calkowita."
+          ? "Liczba stron musi być dodatnią liczbą całkowitą."
           : "Number of pages must be a positive whole number."
       );
       setState("error");
@@ -60,7 +60,7 @@ export function CallRequestPage() {
     if (!requestedCallAtRaw) {
       setError(
         locale === "pl"
-          ? "Data i godzina telefonu sa wymagane."
+          ? "Data i godzina telefonu są wymagane."
           : "Preferred call date and time are required."
       );
       setState("error");
@@ -88,7 +88,7 @@ export function CallRequestPage() {
         submissionError instanceof Error
           ? submissionError.message
           : locale === "pl"
-            ? "Nie mozna wyslac prosby o kontakt."
+            ? "Nie można wysłać prośby o kontakt."
             : "Unable to submit call request."
       );
       setState("error");
@@ -102,11 +102,11 @@ export function CallRequestPage() {
           {locale === "pl" ? "Kontakt telefoniczny" : "Phone Callback"}
         </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-          {locale === "pl" ? "Popros o oddzwonienie" : "Request a Callback"}
+          {locale === "pl" ? "Poproś o oddzwonienie" : "Request a Callback"}
         </h1>
         <p className="mt-3 max-w-3xl leading-7 text-neutral-800">
           {locale === "pl"
-            ? "Zostaw podstawowe informacje, a nasz zespol tlumaczy oddzwoni we wskazanym terminie, aby omowic projekt."
+            ? "Zostaw podstawowe informacje, a nasz zespół tłumaczy oddzwoni we wskazanym terminie, aby omówić projekt."
             : "Leave a few details and one of our translators will call you back at the requested time to review the project."}
         </p>
       </header>
@@ -114,11 +114,11 @@ export function CallRequestPage() {
       {state === "success" ? (
         <section className="border border-neutral-900 p-6" aria-live="polite">
           <h2 className="text-2xl font-semibold tracking-tight">
-            {locale === "pl" ? "Prosba o kontakt zapisana" : "Callback Request Received"}
+            {locale === "pl" ? "Prośba o kontakt zapisana" : "Callback Request Received"}
           </h2>
           <p className="mt-2">
             {locale === "pl"
-              ? `Zapisalismy prosbe dla ${submittedName ?? "klienta"}.`
+              ? `Zapisaliśmy prośbę dla ${submittedName ?? "klienta"}.`
               : `We recorded the callback request for ${submittedName ?? "the customer"}.`}
           </p>
           {submittedCallAt ? (
@@ -128,13 +128,13 @@ export function CallRequestPage() {
             </p>
           ) : null}
           <Link className="mt-4 inline-block underline underline-offset-4" to="/">
-            {locale === "pl" ? "Wroc na strone glowna" : "Return to homepage"}
+            {locale === "pl" ? "Wróć na stronę główną" : "Return to homepage"}
           </Link>
         </section>
       ) : null}
 
       <form onSubmit={onSubmit} className="grid gap-8 md:grid-cols-2" noValidate>
-        <Field label={locale === "pl" ? "Imie i nazwisko" : "Full Name"} name="fullName" required />
+        <Field label={locale === "pl" ? "Imię i nazwisko" : "Full Name"} name="fullName" required />
         <Field
           label={locale === "pl" ? "Numer telefonu" : "Phone Number"}
           name="phone"
@@ -198,7 +198,7 @@ export function CallRequestPage() {
                 ? "Zapisywanie..."
                 : "Submitting..."
               : locale === "pl"
-                ? "Popros o telefon"
+                ? "Poproś o telefon"
                 : "Request Callback"}
           </button>
           <Link to="/" className="self-center underline underline-offset-4">

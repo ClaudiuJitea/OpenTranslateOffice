@@ -81,7 +81,7 @@ export function AdminWorkCalendarPage() {
         loadError instanceof Error
           ? loadError.message
           : locale === "pl"
-            ? "Nie mozna zaladowac uzytkownikow."
+            ? "Nie można załadować użytkowników."
             : "Unable to load users"
       );
     } finally {
@@ -113,7 +113,7 @@ export function AdminWorkCalendarPage() {
         loadError instanceof Error
           ? loadError.message
           : locale === "pl"
-            ? "Nie mozna zaladowac kalendarza pracy."
+            ? "Nie można załadować kalendarza pracy."
             : "Unable to load work calendar"
       );
     } finally {
@@ -134,7 +134,7 @@ export function AdminWorkCalendarPage() {
             </h1>
             <p className="max-w-3xl leading-7 text-neutral-800">
               {locale === "pl"
-                ? "Przegladaj przypisane zlecenia w widoku miesiecznym oraz dzienny harmonogram godzin pracy."
+                ? "Przeglądaj przypisane zlecenia w widoku miesięcznym oraz dzienny harmonogram godzin pracy."
                 : "Review assigned jobs in a monthly calendar and a daily working-hours agenda."}
             </p>
           </div>
@@ -142,7 +142,7 @@ export function AdminWorkCalendarPage() {
             to="/admin"
             className="border border-neutral-900 px-4 py-3 text-xs uppercase tracking-[0.16em]"
           >
-            {locale === "pl" ? "Wroc do administracji" : "Back to Admin"}
+            {locale === "pl" ? "Wróć do administracji" : "Back to Admin"}
           </Link>
         </div>
       </header>
@@ -159,13 +159,13 @@ export function AdminWorkCalendarPage() {
             {locale === "pl" ? "Filtry" : "Filters"}
           </p>
           <h2 className="text-2xl font-semibold tracking-tight">
-            {locale === "pl" ? "Uzytkownik i miesiac" : "User and Month"}
+            {locale === "pl" ? "Użytkownik i miesiąc" : "User and Month"}
           </h2>
         </header>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] xl:items-end">
           <SelectField
-            label={locale === "pl" ? "Uzytkownik" : "User"}
+            label={locale === "pl" ? "Użytkownik" : "User"}
             name="calendarUser"
             value={selectedUserId}
             onChange={(event) => setSelectedUserId(event.target.value)}
@@ -180,7 +180,7 @@ export function AdminWorkCalendarPage() {
               onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}
               className="flex h-12 items-center justify-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em]"
             >
-              {locale === "pl" ? "Poprzedni miesiac" : "Previous Month"}
+              {locale === "pl" ? "Poprzedni miesiąc" : "Previous Month"}
             </button>
             <p className="flex h-12 items-center justify-center border border-neutral-900 px-4 text-center text-sm font-medium uppercase tracking-[0.12em] text-neutral-800">
               {formatMonthLabel(calendarMonth, locale)}
@@ -190,7 +190,7 @@ export function AdminWorkCalendarPage() {
               onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
               className="flex h-12 items-center justify-center border border-neutral-900 px-4 text-xs uppercase tracking-[0.16em]"
             >
-              {locale === "pl" ? "Nastepny miesiac" : "Next Month"}
+              {locale === "pl" ? "Następny miesiąc" : "Next Month"}
             </button>
           </div>
         </div>
@@ -200,7 +200,7 @@ export function AdminWorkCalendarPage() {
         <section className="border border-neutral-900 p-5">
           <p className="text-sm text-neutral-700">
             {locale === "pl"
-              ? "Brak aktywnych uzytkownikow do wyswietlenia w kalendarzu."
+              ? "Brak aktywnych użytkowników do wyświetlenia w kalendarzu."
               : "There are no active users available for the calendar."}
           </p>
         </section>
@@ -215,10 +215,10 @@ export function AdminWorkCalendarPage() {
               <p className="text-neutral-700">
                 {isLoading
                   ? locale === "pl"
-                    ? "Ladowanie zlecen..."
+                    ? "Ładowanie zleceń..."
                     : "Loading jobs..."
                   : locale === "pl"
-                    ? `${jobs.length} zlecen w miesiacu`
+                    ? `${jobs.length} zleceń w miesiącu`
                     : `${jobs.length} jobs in month`}
               </p>
             </div>
@@ -261,7 +261,7 @@ export function AdminWorkCalendarPage() {
                     <div className="mt-3">
                       {dayJobs.length === 0 ? (
                         <p className="text-xs leading-5 text-neutral-500">
-                          {locale === "pl" ? "Brak zlecen" : "No jobs"}
+                          {locale === "pl" ? "Brak zleceń" : "No jobs"}
                         </p>
                       ) : (
                         <p className="text-xs font-medium leading-5 text-neutral-700">
@@ -287,7 +287,7 @@ export function AdminWorkCalendarPage() {
               </h2>
               <p className="text-sm leading-6 text-neutral-800">
                 {locale === "pl"
-                  ? "Kliknij dzien w kalendarzu, aby zobaczyc harmonogram godzinowy."
+                  ? "Kliknij dzień w kalendarzu, aby zobaczyć harmonogram godzinowy."
                   : "Select a day in the calendar to review the hourly schedule."}
               </p>
             </header>
@@ -303,7 +303,7 @@ export function AdminWorkCalendarPage() {
                     <div className="min-w-0 space-y-2">
                       {hourJobs.length === 0 ? (
                         <p className="text-sm text-neutral-500">
-                          {locale === "pl" ? "Brak zaplanowanych zadan" : "No scheduled jobs"}
+                          {locale === "pl" ? "Brak zaplanowanych zadań" : "No scheduled jobs"}
                         </p>
                       ) : (
                         hourJobs.map((job) => (

@@ -13,7 +13,7 @@ export function DashboardPlaceholderPage() {
       </h1>
       <p className="max-w-3xl leading-7 text-neutral-800">
         {locale === "pl"
-          ? "Kolejka przydzialow, stanowisko tlumaczeniowe i wsparcie AI sa planowane na Faze 5."
+          ? "Kolejka przydziałów, stanowisko tłumaczeniowe i wsparcie AI są planowane na Fazę 5."
           : "Assigned queue, translation workbench, and AI support tools are planned for Phase 5."}
       </p>
     </section>

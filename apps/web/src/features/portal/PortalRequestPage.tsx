@@ -39,9 +39,9 @@ export function PortalRequestPage() {
       {data ? (
         <>
           <section className="border border-neutral-900 p-5">
-            <p><span className="text-neutral-700">{locale === "pl" ? "Zgloszenie:" : "Request:"}</span> {data.request.requestNumber}</p>
+            <p><span className="text-neutral-700">{locale === "pl" ? "Zgłoszenie:" : "Request:"}</span> {data.request.requestNumber}</p>
             <p><span className="text-neutral-700">{locale === "pl" ? "Nazwa:" : "Name:"}</span> {data.request.fullName}</p>
-            <p><span className="text-neutral-700">{locale === "pl" ? "Jezyki:" : "Language:"}</span> {data.request.sourceLanguage} {"->"} {data.request.targetLanguage}</p>
+            <p><span className="text-neutral-700">{locale === "pl" ? "Języki:" : "Language:"}</span> {data.request.sourceLanguage} {"->"} {data.request.targetLanguage}</p>
             <p><span className="text-neutral-700">{locale === "pl" ? "Status:" : "Status:"}</span> {data.request.status}</p>
           </section>
 

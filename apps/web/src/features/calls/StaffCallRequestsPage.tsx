@@ -52,8 +52,8 @@ export function StaffCallRequestsPage() {
       setSyncNotice(
         locale === "pl"
           ? result.importedCount > 0
-            ? `Zaimportowano ${result.importedCount} nowych rozmow z ElevenLabs.`
-            : "Brak nowych rozmow do zaimportowania."
+            ? `Zaimportowano ${result.importedCount} nowych rozmów z ElevenLabs.`
+            : "Brak nowych rozmów do zaimportowania."
           : result.importedCount > 0
             ? `Imported ${result.importedCount} new ElevenLabs conversations.`
             : "No new ElevenLabs conversations to import."
@@ -78,7 +78,7 @@ export function StaffCallRequestsPage() {
         updateError instanceof Error
           ? updateError.message
           : locale === "pl"
-            ? "Nie mozna zaktualizowac statusu."
+            ? "Nie można zaktualizować statusu."
             : "Unable to update status."
       );
     } finally {
@@ -98,7 +98,7 @@ export function StaffCallRequestsPage() {
         deleteError instanceof Error
           ? deleteError.message
           : locale === "pl"
-            ? "Nie mozna usunac prosby o kontakt."
+            ? "Nie można usunąć prośby o kontakt."
             : "Unable to delete call request."
       );
     } finally {
@@ -122,7 +122,7 @@ export function StaffCallRequestsPage() {
         loadError instanceof Error
           ? loadError.message
           : locale === "pl"
-            ? "Nie mozna zaladowac prosb o kontakt."
+            ? "Nie można załadować próśb o kontakt."
             : "Unable to load callback requests."
       );
     } finally {
@@ -135,14 +135,14 @@ export function StaffCallRequestsPage() {
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-neutral-900 pb-4">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-700">
-            {locale === "pl" ? "Zgloszenia telefoniczne" : "Call Requests"}
+            {locale === "pl" ? "Zgłoszenia telefoniczne" : "Call Requests"}
           </p>
           <h1 className="text-4xl font-semibold tracking-tight">
-            {locale === "pl" ? "Kolejka rozmow z klientami" : "Customer Callback Queue"}
+            {locale === "pl" ? "Kolejka rozmów z klientami" : "Customer Callback Queue"}
           </h1>
           <p className="max-w-3xl leading-7 text-neutral-800">
             {locale === "pl"
-              ? "Przegladaj prosby o kontakt telefoniczny wraz z numerem telefonu, opisem projektu, liczba stron i preferowanym terminem rozmowy."
+              ? "Przeglądaj prośby o kontakt telefoniczny wraz z numerem telefonu, opisem projektu, liczbą stron i preferowanym terminem rozmowy."
               : "Review callback requests with the customer phone number, project summary, page count, and preferred call time."}
           </p>
         </div>
@@ -174,15 +174,15 @@ export function StaffCallRequestsPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <MetricCard
-          label={locale === "pl" ? "Oczekujace" : "Pending"}
+          label={locale === "pl" ? "Oczekujące" : "Pending"}
           value={isLoading ? "..." : String(upcomingCount)}
         />
         <MetricCard
-          label={locale === "pl" ? "Wszystkie prosby" : "All requests"}
+          label={locale === "pl" ? "Wszystkie prośby" : "All requests"}
           value={isLoading ? "..." : String(items.length)}
         />
         <MetricCard
-          label={locale === "pl" ? "Najblizszy telefon" : "Next call"}
+          label={locale === "pl" ? "Najbliższy telefon" : "Next call"}
           value={
             isLoading
               ? "..."
@@ -202,7 +202,7 @@ export function StaffCallRequestsPage() {
           </p>
           <p className="text-sm text-neutral-700">
             {locale === "pl"
-              ? "Najnowsze zgloszenia sa wyswietlane na gorze."
+              ? "Najnowsze zgłoszenia są wyświetlane na górze."
               : "Newest callback requests are shown first."}
           </p>
         </div>
@@ -248,11 +248,11 @@ export function StaffCallRequestsPage() {
 
         {isLoading ? (
           <p className="p-4 text-sm text-neutral-700">
-            {locale === "pl" ? "Ladowanie prosb o kontakt..." : "Loading callback requests..."}
+            {locale === "pl" ? "Ładowanie próśb o kontakt..." : "Loading callback requests..."}
           </p>
         ) : visibleItems.length === 0 ? (
           <p className="p-4 text-sm text-neutral-700">
-            {locale === "pl" ? "Brak prosb o kontakt w tym widoku." : "There are no callback requests in this view."}
+            {locale === "pl" ? "Brak próśb o kontakt w tym widoku." : "There are no callback requests in this view."}
           </p>
         ) : (
           <div className="divide-y divide-neutral-300">
@@ -320,7 +320,7 @@ export function StaffCallRequestsPage() {
                         ? "Usuwanie..."
                         : "Deleting..."
                       : locale === "pl"
-                        ? "Usun"
+                        ? "Usuń"
                         : "Delete"}
                   </button>
                 </div>
@@ -346,11 +346,11 @@ function localizeStatus(status: CallRequestRecord["status"], locale: string) {
   if (locale === "pl") {
     switch (status) {
       case "PENDING":
-        return "Oczekujace";
+        return "Oczekujące";
       case "SCHEDULED":
         return "Zaplanowane";
       case "COMPLETED":
-        return "Zakonczone";
+        return "Zakończone";
       case "CANCELLED":
         return "Anulowane";
       default:
